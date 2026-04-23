@@ -380,6 +380,8 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      width: 100%;
+      justify-content: center;
       padding: 8px 12px;
       border-radius: 8px;
       border: 1px solid rgba(0, 0, 0, 0.12);
@@ -389,10 +391,16 @@
       line-height: 1;
     }
 
-    .prototype-sidebar-toggle[aria-expanded="true"] {
+    /* Static "View report" CTA: always blue (doesn't reflect open state). */
+    .lovable-district-cta .prototype-sidebar-toggle {
       background: #3063c2;
       border-color: #3063c2;
       color: #fff;
+    }
+
+    .lovable-district-cta .prototype-sidebar-toggle:hover {
+      background: color-mix(in srgb, #3063c2 92%, #000);
+      border-color: color-mix(in srgb, #3063c2 92%, #000);
     }
 
     @media (max-width: 1100px) {
@@ -1221,7 +1229,6 @@
       function syncToggles(open) {
         toggles.forEach(function (t) {
           t.setAttribute("aria-expanded", open ? "true" : "false");
-          t.textContent = open ? "Close report" : "View report";
         });
       }
 
@@ -1304,8 +1311,8 @@
 
       toggles.forEach(function (toggle) {
         toggle.addEventListener("click", function () {
-          var open = !layout.classList.contains("prototype-sidebar-open");
-          setOpen(open);
+          // Always opens the panel; does not toggle/close.
+          setOpen(true);
         });
       });
 
