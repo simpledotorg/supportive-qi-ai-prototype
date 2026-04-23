@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HEARTS360: Hypertension Dashboard</title>
+  <meta name="description"
+    content="A free, open source, template for creating a very useful hypertension and diabetes dashboard to support public health projects." />
+  <meta name="author" content="Resolve to Save Lives" />
+
+  <link rel="icon" href="favicon.png" />
+
+  <link rel="stylesheet" href="css/preflight.css?v=1.0" />
+  <link rel="stylesheet" href="css/template.css" />
+  <link rel="stylesheet" href="css/hearts360.css">
+
+  <!-- IBM Plex fonts (used by both dashboard and aside app) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── District Summary Block ──────────────────────────────────────── */
+    .h360-summary-block {
+      display: flex;
+      align-items: flex-start;
+      gap: 32px;
+      background: var(--h360-surface-sunken);
+      border: 1px solid var(--h360-border);
+      border-radius: var(--h360-radius);
+      padding: 28px 28px 28px 28px;
+      font-family: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+    }
+
+    .h360-summary-left {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .h360-summary-heading {
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--h360-fg);
+      margin-bottom: 10px;
+    }
+
+    .h360-summary-desc {
+      font-size: 13.5px;
+      line-height: 1.55;
+      color: var(--h360-fg);
+      margin-bottom: 16px;
+    }
+
+    .h360-summary-alerts {
+      list-style: none;
+      margin-bottom: 20px;
+    }
+
+    .h360-summary-alert {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--h360-fg);
+      padding: 3px 0;
+    }
+
+    .h360-summary-alert strong {
+      font-weight: 600;
+    }
+
+    .h360-alert-icon {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .h360-alert-icon--warning  { color: var(--h360-amber-fg); }
+    .h360-alert-icon--neutral  { color: var(--h360-muted-fg); }
+    .h360-alert-icon--star     { color: var(--h360-muted-fg); }
+
+    .h360-summary-cta {
+      display: inline-block;
+      background: var(--h360-fg);
+      color: var(--h360-surface);
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 11px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: opacity 0.12s;
+    }
+
+    .h360-summary-cta:hover { opacity: 0.85; }
+
+    .h360-summary-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
+      width: 340px;
+    }
+
+    .h360-summary-stat-tile {
+      background: var(--h360-surface);
+      border: 1px solid var(--h360-border);
+      border-radius: var(--h360-radius);
+      padding: 14px 16px;
+    }
+
+    .h360-summary-stat-tile--alert {
+      border-bottom: 3px solid var(--h360-fg);
+    }
+
+    .h360-summary-stat-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--h360-muted-fg);
+      margin-bottom: 4px;
+    }
+
+    .h360-summary-stat-value {
+      font-family: 'IBM Plex Mono', ui-monospace, monospace;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+      color: var(--h360-fg);
+      margin-bottom: 3px;
+    }
+
+    .h360-summary-stat-sub {
+      font-size: 11.5px;
+      line-height: 1.3;
+    }
+
+    .h360-delta-good { color: var(--h360-good); }
+    .h360-delta-bad  { color: var(--h360-bad); }
+
+    @media (max-width: 700px) {
+      .h360-summary-block {
+        flex-direction: column;
+      }
+      .h360-summary-stats {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+      .h360-summary-stat-tile {
+        flex: 1;
+        min-width: 140px;
+      }
+    }
+
+    /* ── Prototype sidebar layout ────────────────────────────────────── */
+    .prototype-layout {
+      display: flex;
+      gap: 0;
+      align-items: flex-start;
+    }
+
+    .prototype-layout.prototype-sidebar-open {
+      gap: 24px;
+    }
+
+    .prototype-main {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .prototype-aside {
+      flex: 0 0 0;
+      width: 0;
+      max-width: 0;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      position: sticky;
+      top: 0;
+      transform: translateX(24px);
+      transition: width 200ms ease, max-width 200ms ease, opacity 150ms ease, transform 200ms ease;
+      will-change: width, max-width, transform;
+      height: 100vh;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 0;
+    }
+
+    /* The React app root inside the aside — give it room to breathe */
+    .prototype-aside #root {
+      padding: 0 16px 100px;
+      min-height: 100%;
+    }
+
+    .prototype-layout.prototype-sidebar-open .prototype-aside,
+    .prototype-aside.prototype-aside-open {
+      flex-basis: 460px;
+      width: 460px;
+      min-width: 460px;
+      max-width: 460px;
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .prototype-sidebar-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      background: #fff;
+      cursor: pointer;
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    .prototype-sidebar-toggle[aria-expanded="true"] {
+      background: #3063c2;
+      border-color: #3063c2;
+      color: #fff;
+    }
+
+    @media (max-width: 1100px) {
+      .prototype-layout {
+        flex-direction: column;
+      }
+
+      .prototype-aside {
+        position: static;
+        width: 100%;
+        flex-basis: auto;
+        max-width: none;
+        min-width: 0;
+        transform: none;
+      }
+
+      .prototype-layout:not(.prototype-sidebar-open) .prototype-aside {
+        display: none;
+      }
+
+      .prototype-layout.prototype-sidebar-open .prototype-aside {
+        display: block;
+        opacity: 1;
+        pointer-events: auto;
+      }
+    }
+  </style>
+  <script type="module" crossorigin src="/supportive-qi-ai-prototype/assets/main-CSIG2VvZ.js"></script>
+  <link rel="stylesheet" crossorigin href="/supportive-qi-ai-prototype/assets/main-CHUP2Plh.css">
+</head>
+
+<body>
+  <!-- ── Top banner ──────────────────────────────────────────────────── -->
+  <div class="banner">
+    <div class="banner-body">
+      <div class="region-nav">
+        <div class="hover-button">Choose region or facility...</div>
+
+        <div class="card nav-hover-content">
+          <div class="hover-button hover-button-hover-state">
+            Choose region or facility...
+          </div>
+
+          <form class="search-form">
+            <input id="region-search" type="search" class="region-search"
+              placeholder="Search regions or facilities..." />
+          </form>
+          <dl id="search-results" class="search-results hidden">
+            <dt class="search-section">State</dt>
+            <dd class="results-state"><a href="#">Apple State</a></dd>
+            <dd class="results-state"><a href="#">Apington State</a></dd>
+            <dt class="search-section">District</dt>
+            <dd class="results-state">
+              <a href="#">Crabapple District <span>(Granite State)</span></a>
+            </dd>
+            <dd class="results-state">
+              <a href="#">Red Apple District <span>(Apple State)</span></a>
+            </dd>
+            <dt class="search-section">Sub-district</dt>
+            <dd class="results-state">
+              <a href="#">Crabapple Hills <span>(Water State)</span></a>
+            </dd>
+            <dd class="results-state">
+              <a href="#">Crabapple Mountains <span>(Water State)</span></a>
+            </dd>
+          </dl>
+
+          <ul id="myUL" class="nav-list">
+            <li class="region-national"><a href="#">National</a></li>
+            <li class="region-state">
+              <span class="caret caret-down"></span><a href="#">Apple State</a>
+              <ul class="nested active">
+                <li class="region-district">
+                  <span class="caret"></span><a href="#" aria-current="page">River District</a>
+                  <ul class="nested">
+                    <li class="region-subdistrict">
+                      <span class="caret"></span><a href="#">Aquamarine Commune</a>
+                      <ul class="nested">
+                        <li class="region-facility"><a href="#">CC Apple Blossom</a></li>
+                        <li class="region-facility"><a href="#">PHC Almond</a></li>
+                        <li class="region-facility"><a href="#">UPHC Basil</a></li>
+                      </ul>
+                    </li>
+                    <li class="region-subdistrict">
+                      <span class="caret"></span><a href="#">Brown River Commune</a>
+                      <ul class="nested">
+                        <li class="region-facility"><a href="#">CC Apple Blossom</a></li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+                <li class="region-district">
+                  <span class="caret"></span><a href="#">Sunshine District</a>
+                  <ul class="nested">
+                    <li class="region-subdistrict">
+                      <span class="caret"></span><a href="#">Appleblossom Commune</a>
+                      <ul class="nested">
+                        <li class="region-facility"><a href="#">CC Apple Blossom</a></li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li class="region-state">
+              <span class="caret"></span><a href="#">Blackberry State</a>
+              <ul class="nested">
+                <li class="region-district">
+                  <span class="caret"></span><a href="#">Angular District</a>
+                  <ul class="nested">
+                    <li class="region-subdistrict">
+                      <span class="caret"></span><a href="#">Anthill Commune</a>
+                      <ul class="nested">
+                        <li class="region-facility"><a href="#">CC Butterbean</a></li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <h1>
+        <div class="logo">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill-opacity="1.0" fill="white">
+            <path
+              d="M16.5 3C19.5376 3 22 5.5 22 9C22 16 14.5 20 12 21.5C10.0226 20.3135 4.91699 17.563 2.86894 13.001L1 13V11L2.21045 11.0009C2.07425 10.3633 2 9.69651 2 9C2 5.5 4.5 3 7.5 3C9.35997 3 11 4 12 5C13 4 14.64 3 16.5 3ZM16.5 5C15.4241 5 14.2593 5.56911 13.4142 6.41421L12 7.82843L10.5858 6.41421C9.74068 5.56911 8.5759 5 7.5 5C5.55906 5 4 6.6565 4 9C4 9.68542 4.09035 10.3516 4.26658 11.0004L6.43381 11L8.5 7.55635L11.5 12.5563L12.4338 11H17V13H13.5662L11.5 16.4437L8.5 11.4437L7.56619 13L5.10789 13.0006C5.89727 14.3737 7.09304 15.6681 8.64514 16.9029C9.39001 17.4955 10.1845 18.0485 11.0661 18.6038C11.3646 18.7919 11.6611 18.9729 12 19.1752C12.3389 18.9729 12.6354 18.7919 12.9339 18.6038C13.8155 18.0485 14.61 17.4955 15.3549 16.9029C18.3337 14.533 20 11.9435 20 9C20 6.64076 18.463 5 16.5 5Z">
+            </path>
+          </svg>
+        </div>
+        <span>HEARTS</span>360
+      </h1>
+
+      <div class="link-list">
+        <span style="padding:2px 4px;background:#3063c2;display:inline-block;height:100%;color:white;border-radius:3px;font-size:11px;">v1.4</span>
+        <a href="about.html">About</a>
+        <a class="external-link desktop-only" href="https://github.com/simpledotorg/hearts360#developer-guide">Developer guide</a>
+        <a class="external-link" href="https://github.com/simpledotorg/hypertension-dashboard">GitHub</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Dashboard nav tabs ──────────────────────────────────────────── -->
+  <div class="link-dashboards">
+    <ul>
+      <li class="active-link">
+        <a href="dashboard.html">Hypertension <span class="desktop-only">dashboard</span></a>
+      </li>
+      <li>
+        <a href="diabetes.html">Diabetes <span class="desktop-only">dashboard</span></a>
+      </li>
+      <li>
+        <a href="overdue.html">Overdue <span class="desktop-only">patients list</span></a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ── Main content ───────────────────────────────────────────────── -->
+  <main class="main">
+    <div class="prototype-layout" id="prototype-layout">
+
+      <!-- ── Primary dashboard column ─────────────────────────────── -->
+      <div class="prototype-main">
+
+        <div class="header">
+          <h1>River District</h1>
+          <div class="date-updated">Data last updated: 5-Aug-2024</div>
+        </div>
+
+        <!-- District summary block -->
+        <div class="h360-summary-block">
+          <div class="h360-summary-left">
+            <h2 class="h360-summary-heading">District Summary</h2>
+            <p class="h360-summary-desc">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu orci erat.
+              In posuere dapibus quam sed tincidunt.
+            </p>
+            <ul class="h360-summary-alerts">
+              <li class="h360-summary-alert">
+                <span class="h360-alert-icon h360-alert-icon--warning">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2L1 21h22L12 2zm0 3.5L20.5 19h-17L12 5.5zM11 10v4h2v-4h-2zm0 6v2h2v-2h-2z" />
+                  </svg>
+                </span>
+                <span><strong>BP control</strong> has dropped for 3 months in a row. Main reasons: low titration (<strong>36%</strong>) and missed visits (<strong>31%</strong>).</span>
+              </li>
+              <li class="h360-summary-alert">
+                <span class="h360-alert-icon h360-alert-icon--neutral">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-5h2v2h-2zm0-8h2v6h-2z" />
+                  </svg>
+                </span>
+                <span><strong>6 facilities</strong> need action this month. <strong>2</strong> are new problems.</span>
+              </li>
+              <li class="h360-summary-alert">
+                <span class="h360-alert-icon h360-alert-icon--star">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                  </svg>
+                </span>
+                <span><strong>Drug stock</strong> is low at <strong>3 facilities</strong>. <strong>Kacuya Bohor</strong> has been low for <strong>4 months</strong>.</span>
+              </li>
+            </ul>
+
+            <!-- Toggle button wires up the aside panel -->
+            <button
+              class="prototype-sidebar-toggle"
+              type="button"
+              aria-expanded="false"
+              id="sidebar-toggle"
+            >
+              View report
+            </button>
+          </div>
+
+          <!-- Stat tiles -->
+          <div class="h360-summary-stats">
+            <div class="h360-summary-stat-tile">
+              <div class="h360-summary-stat-label">
+                Controlled BP
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="color:var(--h360-muted-fg)">
+                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                </svg>
+              </div>
+              <div class="h360-summary-stat-value">78%</div>
+              <div class="h360-summary-stat-sub h360-delta-good">↑ 4pts this month</div>
+            </div>
+            <div class="h360-summary-stat-tile h360-summary-stat-tile--alert">
+              <div class="h360-summary-stat-label">
+                Overdue Calls
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="color:var(--h360-amber-fg)">
+                  <path d="M12 2L1 21h22L12 2zm0 3.5L20.5 19h-17L12 5.5zM11 10v4h2v-4h-2zm0 6v2h2v-2h-2z" />
+                </svg>
+              </div>
+              <div class="h360-summary-stat-value">47</div>
+              <div class="h360-summary-stat-sub h360-delta-bad">+12 this week</div>
+            </div>
+            <div class="h360-summary-stat-tile">
+              <div class="h360-summary-stat-label">
+                Missed Visit
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="color:var(--h360-muted-fg)">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-5h2v2h-2zm0-8h2v6h-2z" />
+                </svg>
+              </div>
+              <div class="h360-summary-stat-value">14%</div>
+              <div class="h360-summary-stat-sub" style="color:var(--h360-muted-fg)">38 visits · past 3mo</div>
+            </div>
+          </div>
+        </div>
+
+        <h2 class="columns-header">1. Overview indicators</h2>
+
+        <div class="columns-3">
+          <div class="card col-span-2">
+            <div class="heading">
+              <h3>Patients protected from heart attacks and strokes with world-class treatment</h3>
+              <div class="figures">
+                <p class="large-num bp-controlled">4,808 patients</p>
+                <div class="detail">
+                  <p>in River District with BP &lt;140/90</p>
+                </div>
+              </div>
+              <div class="chart" style="height: 350px">
+                <canvas id="patientsprotected"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="heading">
+              <h3>Hypertension treatment cascade</h3>
+              <p>Estimated adults (&gt;30) in River District with hypertension who are registered, under care, and controlled.</p>
+              <div class="info">
+                <div class="info-hover-text">
+                  <p><b>Estimated population</b> with hypertension is derived from a STEPS Community Survey conducted in 2022.</p>
+                  <p><b>Patients under care</b> are patients with hypertension with at least 1 visit in the past 12 months.</p>
+                </div>
+              </div>
+            </div>
+            <div class="body">
+              <div class="coverage">
+                <div class="coverage-column">
+                  <div class="coverage-bar">
+                    <div class="coverage-bar-fill" style="height: 100%">
+                      <p class="coverage-estimated">100%</p>
+                    </div>
+                  </div>
+                  <p>250,800</p>
+                  <p class="text-grey label-small">Estimated people with hypertension</p>
+                </div>
+                <div class="coverage-column">
+                  <div class="coverage-bar">
+                    <div class="coverage-bar-fill registrations-bg" style="height: 5%">
+                      <p class="coverage-number registrations">5%</p>
+                    </div>
+                  </div>
+                  <p>12,213</p>
+                  <p class="text-grey label-small">Cumulative registered patients</p>
+                </div>
+                <div class="coverage-column">
+                  <div class="coverage-bar">
+                    <div class="coverage-bar-fill under-care-bg" style="height: 4%">
+                      <p class="coverage-number under-care">4%</p>
+                    </div>
+                  </div>
+                  <p>10,632</p>
+                  <p class="text-grey label-small">Patients under care</p>
+                </div>
+                <div class="coverage-column">
+                  <div class="coverage-bar">
+                    <div class="coverage-bar-fill bp-controlled-bg" style="height: 2%">
+                      <p class="coverage-number bp-controlled">2%</p>
+                    </div>
+                  </div>
+                  <p>4,808</p>
+                  <p class="text-grey label-small">Patients with BP controlled</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h2 class="columns-header spacer">2. Program management indicators</h2>
+
+        <div class="card">
+          <div class="heading">
+            <h3>Hypertension treatment outcomes</h3>
+            <div class="info">
+              <div class="info-hover-text">
+                <p><span>Numerator for BP controlled:</span> Patients with BP &lt;140 AND &lt;90 at their latest visit in the past 3 months.</p>
+                <p><span>Numerator for BP uncontrolled:</span> Patients with BP &ge;140 OR &ge;90 at their latest visit in the past 3 months.</p>
+                <p><span>Numerator for No visit in 3 months:</span> Patients with no visit in the past 3 months.</p>
+                <p><span>Denominator:</span> Patients with hypertension registered before the past 3 months. Dead patients (205) and 12 month lost to follow-up patients (1,562) are excluded.</p>
+              </div>
+            </div>
+            <p>Outcomes for 7,882 patients under care (registered before 1-May-2024) between 1-May-2024 to 31-Jul-2024</p>
+
+            <div class="body columns-3">
+              <div class="inner-card">
+                <div class="figures">
+                  <h4 class="bp-controlled">BP controlled at latest visit in past 3 months</h4>
+                  <p class="large-num bp-controlled">61%</p>
+                  <div class="detail"><p>4,808 patients with BP &lt;140/90</p></div>
+                </div>
+                <div class="chart"><canvas id="bpcontrolled"></canvas></div>
+              </div>
+              <div class="inner-card">
+                <div class="figures">
+                  <h4 class="bp-uncontrolled">BP not controlled at latest visit in past 3 months</h4>
+                  <p class="large-num bp-uncontrolled">17%</p>
+                  <div class="detail"><p>1,340 patients with BP &ge;140/90</p></div>
+                </div>
+                <div class="chart"><canvas id="bpuncontrolled"></canvas></div>
+              </div>
+              <div class="inner-card">
+                <div class="figures">
+                  <h4 class="three-month-ltfu">No visit in past 3 months</h4>
+                  <p class="large-num three-month-ltfu">22%</p>
+                  <div class="detail"><p>1,734 patients with no visit</p></div>
+                </div>
+                <div class="chart"><canvas id="ltfu3Month"></canvas></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="columns-3">
+          <div class="card">
+            <div class="heading">
+              <h3>Patients under care</h3>
+              <div class="info">
+                <div class="info-hover-text">
+                  <p><span>Patients under care:</span> Registered patients with hypertension with at least 1 visit in the past 12 months.</p>
+                  <p><span>Cumulative registered patients:</span> All patients with hypertension registered. Dead patients (205) are excluded.</p>
+                </div>
+              </div>
+              <p>Patients with hypertension with at least 1 visit in the past 12 months</p>
+            </div>
+            <div class="body">
+              <div class="figures">
+                <div>
+                  <p class="large-num under-care">10,632</p>
+                  <div class="detail">
+                    <p>1,043 patients registered in Jul-2024</p>
+                    <p class="text-grey">of <span class="registrations">12,213 cumulative registered patients</span></p>
+                  </div>
+                </div>
+              </div>
+              <div class="chart"><canvas id="registrations"></canvas></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="heading">
+              <h3>12 month lost to follow-up</h3>
+              <p>Patients with hypertension with no visit in the past 12 months</p>
+            </div>
+            <div class="body">
+              <div class="figures">
+                <p class="large-num twelve-month-ltfu">10%</p>
+                <div class="detail">
+                  <p>1,562 patients with no visit from Aug-2023 to Jul-2024</p>
+                  <p class="text-grey">of <span class="registrations">12,213 cumulative registered patients</span></p>
+                </div>
+              </div>
+              <div class="chart"><canvas id="ltfu12Months"></canvas></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="heading">
+              <h3>Facility BP screening</h3>
+              <p>% of estimated adult OPD patients screened for hypertension</p>
+            </div>
+            <div class="body">
+              <div class="figures">
+                <div>
+                  <p class="large-num" style="color: #34aea0">23%</p>
+                  <div class="detail">
+                    <p>6,900 individuals screened for hypertension in Jul-2024</p>
+                    <p class="text-grey">of ~30,000 estimated OPD patients &gt;18 years</p>
+                  </div>
+                </div>
+              </div>
+              <div class="chart"><canvas id="screenings"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="heading">
+            <h3>Compare sub-regions</h3>
+            <p>Treatment outcomes for patients with hypertension at their latest visit from 1-May-2024 to 31-Jul-2024</p>
+          </div>
+          <div class="table-container">
+            <p class="table-scroll-message text-grey mobile-only">scroll table &rarr;</p>
+            <div class="table-wrap">
+              <table id="table-regions">
+                <colgroup><col /><col span="2" /><col span="2" /><col span="2" /><col span="2" /></colgroup>
+                <thead>
+                  <tr class="text-center">
+                    <td></td>
+                    <th scope="colgroup">Patients under care</th>
+                    <th scope="colgroup">Monthly new patients registered</th>
+                    <th colspan="2" scope="colgroup">BP controlled</th>
+                    <th colspan="2" scope="colgroup">BP uncontrolled</th>
+                    <th colspan="2" scope="colgroup">No visit in past 3 months</th>
+                  </tr>
+                  <tr class="head-bg">
+                    <th><div>Sub-regions</div></th>
+                    <th class="text-right"><div>Total</div></th>
+                    <th class="text-right"><div>Jul-2024</div></th>
+                    <th class="text-right"><div>Total</div></th>
+                    <th data-sort-default><div>Percent</div></th>
+                    <th class="text-right"><div>Total</div></th>
+                    <th><div>Percent</div></th>
+                    <th class="text-right"><div>Total</div></th>
+                    <th><div>Percent</div></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="totals" data-sort-method="none">
+                    <th class="link"><b>River District</b></th>
+                    <td class="number under-care bold">10,539</td>
+                    <td class="number">1,043</td>
+                    <td class="number">4,808</td>
+                    <td class="bp-controlled bold">61%</td>
+                    <td class="number">1,340</td>
+                    <td class="bp-uncontrolled bold">17%</td>
+                    <td class="number">1,734</td>
+                    <td class="three-month-ltfu bold">22%</td>
+                  </tr>
+                  <tr>
+                    <th class="link"><a href="#">Cherry Blossom County</a></th>
+                    <td class="number under-care bold">1,100</td><td class="number">139</td>
+                    <td class="number">450</td><td class="bp-controlled bold">50%</td>
+                    <td class="number">145</td><td class="bp-uncontrolled bold">16%</td>
+                    <td class="number">212</td><td class="three-month-ltfu bold">34%</td>
+                  </tr>
+                  <tr>
+                    <th class="link"><a href="#">Fern Grove County</a></th>
+                    <td class="number under-care bold">505</td><td class="number">106</td>
+                    <td class="number">245</td><td class="bp-controlled bold">84%</td>
+                    <td class="number">12</td><td class="bp-uncontrolled bold">4%</td>
+                    <td class="number">56</td><td class="three-month-ltfu bold">12%</td>
+                  </tr>
+                  <tr>
+                    <th class="link"><a href="#">Hillside County</a></th>
+                    <td class="number under-care bold">3,203</td><td class="number">305</td>
+                    <td class="number">1,802</td><td class="bp-controlled bold">69%</td>
+                    <td class="number">291</td><td class="bp-uncontrolled bold">11%</td>
+                    <td class="number">245</td><td class="three-month-ltfu bold">19%</td>
+                  </tr>
+                  <tr>
+                    <th class="link"><a href="#">Mountain County</a></th>
+                    <td class="number under-care bold">900</td><td class="number">56</td>
+                    <td class="number">240</td><td class="bp-controlled bold">30%</td>
+                    <td class="number">108</td><td class="bp-uncontrolled bold">14%</td>
+                    <td class="number">289</td><td class="three-month-ltfu bold">56%</td>
+                  </tr>
+                  <tr>
+                    <th class="link"><a href="#">Peaks County</a></th>
+                    <td class="number under-care bold">2,104</td><td class="number">120</td>
+                    <td class="number">972</td><td class="bp-controlled bold">52%</td>
+                    <td class="number">421</td><td class="bp-uncontrolled bold">23%</td>
+                    <td class="number">320</td><td class="three-month-ltfu bold">25%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="heading">
+            <h3>Quarterly cohort reports</h3>
+            <p>The treatment outcomes for newly registered patients at the end of the following quarter</p>
+          </div>
+          <div class="body">
+            <p class="table-scroll-message text-grey mobile-only">scroll chart &rarr;</p>
+            <div class="table-wrap">
+              <div class="cohort">
+                <div class="cohort-quarter">
+                  <div class="cohort-bar">
+                    <div class="segment bp-controlled-bg" style="height: 63%">63%</div>
+                    <div class="segment bp-uncontrolled-bg" style="height: 18%">18%</div>
+                    <div class="segment three-month-ltfu-bg" style="height: 21%">21%</div>
+                  </div>
+                  <div class="cohort-detail"><b>Q4-2022 cohort</b> 1,006 patients<p class="text-grey">Result from latest visit in Q1-2023</p></div>
+                </div>
+                <div class="cohort-quarter">
+                  <div class="cohort-bar">
+                    <div class="segment bp-controlled-bg" style="height: 76%">76%</div>
+                    <div class="segment bp-uncontrolled-bg" style="height: 10%">10%</div>
+                    <div class="segment three-month-ltfu-bg" style="height: 14%">14%</div>
+                  </div>
+                  <div class="cohort-detail"><b>Q4-2023 cohort</b> 941 patients<p class="text-grey">Result from latest visit in Q1-2024</p></div>
+                </div>
+                <div class="cohort-quarter">
+                  <div class="cohort-bar">
+                    <div class="segment bp-controlled-bg" style="height: 80%">80%</div>
+                    <div class="segment bp-uncontrolled-bg" style="height: 12%">12%</div>
+                    <div class="segment three-month-ltfu-bg" style="height: 8%">8%</div>
+                  </div>
+                  <div class="cohort-detail"><b>Q1-2024 cohort</b> 1,281 patients<p class="text-grey">Result from latest visit in Q2-2024</p></div>
+                </div>
+                <div class="cohort-quarter">
+                  <div class="cohort-bar">
+                    <div class="segment" style="height: 100%; border: 2px solid rgb(241, 241, 241)"></div>
+                  </div>
+                  <div class="cohort-detail"><b>Q2-2024 cohort</b> 2,725 patients<p class="text-grey">Coming Oct-2024</p></div>
+                </div>
+              </div>
+              <div class="key">
+                <div class="key-text"><span class="key-color-box bp-controlled-bg"></span> BP controlled</div>
+                <div class="key-text"><span class="key-color-box bp-uncontrolled-bg"></span> BP uncontrolled</div>
+                <div class="key-text"><span class="key-color-box three-month-ltfu-bg"></span> No visit in quarter</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h2 class="columns-header spacer">3. Overdue patients</h2>
+        <div class="columns-3">
+          <div class="card normal-flow">
+            <div class="heading">
+              <h3>Overdue patients</h3>
+              <p>Patients that are overdue at the start of the month.</p>
+            </div>
+            <div class="body">
+              <div class="figures">
+                <div>
+                  <p class="large-num overdue">26%</p>
+                  <div class="detail">
+                    <p>2,800 patients were overdue at the start of Jul-2024</p>
+                    <p class="text-grey">of <span class="under-care">10,800 patients under care</span></p>
+                  </div>
+                </div>
+              </div>
+              <div class="chart"><canvas id="overdue"></canvas></div>
+            </div>
+          </div>
+
+          <div class="card normal-flow">
+            <div class="heading">
+              <h3>Overdue patients called</h3>
+              <p>Patients called during the month.</p>
+            </div>
+            <div class="body">
+              <div class="figures">
+                <p class="large-num overdue-called">42%</p>
+                <div class="detail">
+                  <p>1,176 patients called in Jul-2024</p>
+                  <p class="text-grey">of <span class="overdue">2,800 overdue patients</span></p>
+                </div>
+              </div>
+              <div class="chart"><canvas id="overdueCalled"></canvas></div>
+              <div class="extra">
+                <p><span class="agreed">47%</span> (552) agreed to visit</p>
+                <p><span class="remind">28%</span> (329) to be called later</p>
+                <p><span class="removed">25%</span> (294) removed from list</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card normal-flow">
+            <div class="heading">
+              <h3>Overdue patients that returned to care</h3>
+              <p>Patients that returned to care within 15 days of call.</p>
+            </div>
+            <div class="body">
+              <div class="figures">
+                <div>
+                  <p class="large-num overdue-returned">58%</p>
+                  <div class="detail">
+                    <p>682 patients returned to care within 15 days</p>
+                    <p class="text-grey">of <span class="overdue-called-denominator">1,176 overdue patients called</span> in Jul-2024</p>
+                  </div>
+                </div>
+              </div>
+              <div class="chart"><canvas id="overdueReturned"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <h2 class="columns-header spacer">4. Inventory indicators</h2>
+        <div class="columns-3">
+          <div class="card">
+            <div class="heading">
+              <h3>Anti-hypertensive drug stock</h3>
+              <p>Facilities with &ge;30 patient days of hypertension protocol drugs in stock</p>
+            </div>
+            <div class="body">
+              <div class="key key-per-row">
+                <div class="key-text"><span class="key-color-box step-one-drugs"></span><b>Step 1 drugs</b> — 94% in Jul-2024</div>
+                <div class="key-text"><span class="key-color-box step-two-drugs"></span><b>Step 2 drugs</b> — 64% in Jul-2024</div>
+                <div class="key-text"><span class="key-color-box step-three-drugs"></span><b>Step 3 drugs</b> — 90% in Jul-2024</div>
+              </div>
+              <div>&nbsp;</div>
+              <div class="chart"><canvas id="drugstock"></canvas></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="body">
+              <h3>Blood pressure monitors</h3>
+              <p>Facilities with a functioning BP monitor</p>
+              <div class="figures" style="margin-top: 2em">
+                <p class="large-num">98%</p>
+                <div class="detail">
+                  <p>157 facilities with a functioning BP monitor</p>
+                  <p class="text-grey">of 160 facilities reporting in Jul-2024</p>
+                </div>
+              </div>
+              <div class="text-grey" style="margin-top: 2em">3 facilities without a functioning BP monitor:</div>
+              <div class="text-grey">
+                <a href="#">CHC Turnip</a>, <a href="#">CHC Zucchiniville</a>, <a href="#">PHC Grapefruit Hill</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h2 class="columns-header spacer">5. Age and sex</h2>
+        <div class="card">
+          <div class="heading">
+            <h3>Age and sex of patients under care for hypertension</h3>
+            <p><span class="under-care">10,632 patients under care</span></p>
+          </div>
+          <div class="body">
+            <div class="table-container">
+              <p class="table-scroll-message text-grey mobile-only">scroll table &rarr;</p>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th style="width:10%;border-right:0">Age</th>
+                      <th style="width:40%" class="text-right">Female (64%)</th>
+                      <th style="width:40%;border-right:0">Male (36%)</th>
+                      <th style="width:10%;border-left:0">Female and male</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th style="border-right:0">18-29</th>
+                      <td class="text-right"><div style="border-radius:3px;padding:4px 8px;color:rgba(0,0,0,0.6);background:Thistle;width:24%;display:inline-block;">6%</div></td>
+                      <td style="border-right:0"><div style="border-radius:3px;padding:4px 8px;color:rgba(0,0,0,0.6);background:LightSteelBlue;width:16%;display:inline-block;">4%</div></td>
+                      <td style="border-left:0" class="text-right">10%</td>
+                    </tr>
+                    <tr>
+                      <th style="border-right:0">30-49</th>
+                      <td class="text-right"><div style="border-radius:3px;padding:4px 8px;color:rgba(0,0,0,0.6);background:Thistle;width:100%;display:inline-block;">28%</div></td>
+                      <td style="border-right:0"><div style="border-radius:3px;padding:4px 8px;color:rgba(0,0,0,0.6);background:LightSteelBlue;width:68%;display:inline-block;">17%</div></td>
+                      <td style="border-left:0" class="text-right">45%</td>
+                    </tr>
+                    <tr>
+                      <th style="border-right:0">50-69</th>
+                      <td class="text-right"><div style="border-radius:3px;padding:4px 8px;color:rgba(0,0,0,0.6);background:Thistle;width:76%;display:inline-block;">19%</div></td>
+                      <td style="border-right:0"><div style="border-radius:3px;padding:4px 8px;color:rgba(0,0,0,0.6);background:LightSteelBlue;width:24%;display:inline-block;">6%</div></td>
+                      <td style="border-left:0" class="text-right">25%</td>
+                    </tr>
+                    <tr>
+                      <th style="border-right:0">70+</th>
+                      <td class="text-right"><div style="border-radius:3px;padding:4px 8px;color:rgba(0,0,0,0.6);background:Thistle;width:48%;display:inline-block;">12%</div></td>
+                      <td style="border-right:0"><div style="border-radius:3px;padding:4px 8px;color:rgba(0,0,0,0.6);background:LightSteelBlue;width:24%;display:inline-block;">8%</div></td>
+                      <td style="border-left:0" class="text-right">20%</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="notes spacer">
+          <div class="notes-body">
+            <ol>
+              <li>
+                <code>Cumulative registered patients</code>
+                <p>All patients diagnosed with hypertension. Dead patients are excluded.</p>
+              </li>
+              <li>
+                <code>Patients under care</code>
+                <p>All patients diagnosed with hypertension with a "visit" recorded in the last 12 months.</p>
+              </li>
+              <li>
+                <code>12 month lost to follow-up patients</code>
+                <p>All patients diagnosed with hypertension with no "visit" recorded in the last 12 months.</p>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <!-- /prototype-main -->
+
+      <!-- ── Aside: React app mounts here ──────────────────────────── -->
+      <!--
+        The React app (src/main.tsx) mounts to #root.
+        On desktop it slides in from the right when the "View report"
+        button is clicked. On mobile it renders below the main content.
+        The app is already designed as a narrow 420px panel, which fits
+        perfectly inside this aside.
+      -->
+      <aside class="prototype-aside" aria-label="District report panel" id="prototype-aside">
+        <div id="root"></div>
+      </aside>
+
+    </div>
+    <!-- /prototype-layout -->
+  </main>
+
+  <!-- ── HEARTS360 scripts ───────────────────────────────────────────── -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+  <script src="./js/charts.js"></script>
+  <script src="js/tablesort.js"></script>
+  <script src="js/tablesort.number.js"></script>
+  <script src="js/navigation.js"></script>
+  <script>
+    new Tablesort(document.getElementById("table-regions"));
+  </script>
+
+  <!-- ── Sidebar toggle ─────────────────────────────────────────────── -->
+  <script>
+    (function () {
+      var toggle = document.getElementById("sidebar-toggle");
+      var layout = document.getElementById("prototype-layout");
+      var aside  = document.getElementById("prototype-aside");
+
+      if (!toggle || !layout || !aside) return;
+
+      toggle.addEventListener("click", function () {
+        var open = !layout.classList.contains("prototype-sidebar-open");
+        layout.classList.toggle("prototype-sidebar-open", open);
+        aside.classList.toggle("prototype-aside-open", open);
+        toggle.setAttribute("aria-expanded", open ? "true" : "false");
+        toggle.textContent = open ? "Close report" : "View report";
+      });
+    })();
+  </script>
+
+  <!-- ── React app (aside module) ───────────────────────────────────── -->
+
+</body>
+</html>
