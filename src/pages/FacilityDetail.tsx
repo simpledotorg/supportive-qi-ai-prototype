@@ -79,7 +79,13 @@ export default function FacilityDetail() {
     { label: "Missed visit", value: facility.missed3m, delta: facility.missed3mT, goodDir: "down" as const },
     { label: "Titration rate", value: facility.titration, delta: facility.titrationT, goodDir: "up" as const },
     { label: "Statin prescription", value: facility.statins, delta: facility.statinsT, goodDir: "up" as const },
-    { label: "BP fudging", value: facility.fudging, delta: facility.fudgingT, goodDir: "down" as const },
+    {
+      label: "BP fudging",
+      value: facility.fudging,
+      delta: facility.fudgingT,
+      goodDir: "down" as const,
+      valueMode: "ratio" as const,
+    },
   ];
 
   const handleAddNote = () => {
