@@ -4,6 +4,13 @@ export default {
   darkMode: ["class"],
   content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
   prefix: "",
+  // Scope Tailwind utilities/components to the React app subtree.
+  // (Also prevents `.bg-*`, `.text-*`, etc. from affecting the dashboard outside `#root`.)
+  important: "#root",
+  // Disable Tailwind's global preflight so it doesn't reset the whole page.
+  corePlugins: {
+    preflight: false,
+  },
   theme: {
     container: {
       center: true,

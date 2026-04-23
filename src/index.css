@@ -10,7 +10,8 @@
    =========================================================== */
 
 @layer base {
-  :root {
+  /* Keep all tokens inside the React app subtree. */
+  #root {
     /* Warm neutral surfaces */
     --background: 60 11% 96%;          /* #F5F5F3 page */
     --surface: 0 0% 100%;              /* card */
@@ -86,7 +87,7 @@
     --sidebar-ring: 0 0% 30%;
   }
 
-  .dark {
+  #root.dark {
     /* Dark unused in this prototype — kept consistent for shadcn */
     --background: 0 0% 8%;
     --foreground: 0 0% 96%;
@@ -122,58 +123,62 @@
 }
 
 @layer base {
-  * {
+  /* Small scoped reset (since Tailwind preflight is disabled). */
+  #root,
+  #root *,
+  #root *::before,
+  #root *::after {
+    box-sizing: border-box;
+  }
+
+  #root * {
     @apply border-border;
   }
 
-  html {
-    -webkit-text-size-adjust: 100%;
-  }
-
-  body {
+  #root {
     @apply bg-background text-foreground antialiased;
     font-family: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
     font-feature-settings: "ss01", "cv11";
   }
 
-  .font-mono {
+  #root .font-mono {
     font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
     font-feature-settings: "tnum";
   }
 
   /* Tabular numerals everywhere numbers are shown */
-  .tnum {
+  #root .tnum {
     font-variant-numeric: tabular-nums;
   }
 }
 
 @layer utilities {
-  .bg-surface { background-color: hsl(var(--surface)); }
-  .bg-surface-sunken { background-color: hsl(var(--surface-sunken)); }
-  .border-strong { border-color: hsl(var(--border-strong)); }
+  #root .bg-surface { background-color: hsl(var(--surface)); }
+  #root .bg-surface-sunken { background-color: hsl(var(--surface-sunken)); }
+  #root .border-strong { border-color: hsl(var(--border-strong)); }
 
-  .text-bad { color: hsl(var(--bad)); }
-  .bg-bad { background-color: hsl(var(--bad)); }
-  .bg-bad-soft { background-color: hsl(var(--bad-soft)); }
-  .text-bad-soft-foreground { color: hsl(var(--bad-soft-foreground)); }
-  .border-bad { border-color: hsl(var(--bad)); }
+  #root .text-bad { color: hsl(var(--bad)); }
+  #root .bg-bad { background-color: hsl(var(--bad)); }
+  #root .bg-bad-soft { background-color: hsl(var(--bad-soft)); }
+  #root .text-bad-soft-foreground { color: hsl(var(--bad-soft-foreground)); }
+  #root .border-bad { border-color: hsl(var(--bad)); }
 
-  .text-good { color: hsl(var(--good)); }
-  .bg-good { background-color: hsl(var(--good)); }
-  .bg-good-soft { background-color: hsl(var(--good-soft)); }
-  .text-good-soft-foreground { color: hsl(var(--good-soft-foreground)); }
-  .border-good { border-color: hsl(var(--good)); }
+  #root .text-good { color: hsl(var(--good)); }
+  #root .bg-good { background-color: hsl(var(--good)); }
+  #root .bg-good-soft { background-color: hsl(var(--good-soft)); }
+  #root .text-good-soft-foreground { color: hsl(var(--good-soft-foreground)); }
+  #root .border-good { border-color: hsl(var(--good)); }
 
   /* Amber */
-  .bg-amber-bg { background-color: hsl(var(--amber-bg)); }
-  .border-amber-border { border-color: hsl(var(--amber-border)); }
-  .text-amber-text { color: hsl(var(--amber-text)); }
+  #root .bg-amber-bg { background-color: hsl(var(--amber-bg)); }
+  #root .border-amber-border { border-color: hsl(var(--amber-border)); }
+  #root .text-amber-text { color: hsl(var(--amber-text)); }
 
   /* Category tags */
-  .cat-op { background-color: hsl(var(--cat-op-bg)); color: hsl(var(--cat-op-text)); }
-  .cat-retention { background-color: hsl(var(--cat-retention-bg)); color: hsl(var(--cat-retention-text)); }
-  .cat-clinical { background-color: hsl(var(--cat-clinical-bg)); color: hsl(var(--cat-clinical-text)); }
-  .cat-supply { background-color: hsl(var(--cat-supply-bg)); color: hsl(var(--cat-supply-text)); }
-  .cat-data { background-color: hsl(var(--cat-data-bg)); color: hsl(var(--cat-data-text)); }
-  .cat-outcomes { background-color: hsl(var(--cat-outcomes-bg)); color: hsl(var(--cat-outcomes-text)); }
+  #root .cat-op { background-color: hsl(var(--cat-op-bg)); color: hsl(var(--cat-op-text)); }
+  #root .cat-retention { background-color: hsl(var(--cat-retention-bg)); color: hsl(var(--cat-retention-text)); }
+  #root .cat-clinical { background-color: hsl(var(--cat-clinical-bg)); color: hsl(var(--cat-clinical-text)); }
+  #root .cat-supply { background-color: hsl(var(--cat-supply-bg)); color: hsl(var(--cat-supply-text)); }
+  #root .cat-data { background-color: hsl(var(--cat-data-bg)); color: hsl(var(--cat-data-text)); }
+  #root .cat-outcomes { background-color: hsl(var(--cat-outcomes-bg)); color: hsl(var(--cat-outcomes-text)); }
 }
