@@ -1,15 +1,13 @@
-import type { Facility, FacilityStatus } from "@/data/facilities";
+import type { Facility, FacilityStatus, InsightCategory, InsightItem } from "@/data/facilities";
 
-export type FacilityTsvRow = {
+export type FacilityTsvPatch = {
   facility: string;
   category: string;
-  districtSummaryCard: string;
-  facilityCardInsight1: string;
-  facilityCardInsight2: string;
-  facilityCardInsight3: string;
-  verify1: string;
-  verify2: string;
-  verify3: string;
+  status: FacilityStatus | null;
+  cardInsights: string[];
+  detailSummary: string[];
+  verify: string[];
+  concerns: InsightItem[];
 };
 
 const norm = (s: string) => s.trim().toLowerCase().replace(/\s+/g, " ");
@@ -36,7 +34,47 @@ function parseTsvLine(line: string): string[] {
   return line.split("\t").map((v) => v.trim());
 }
 
-export function parseFacilityTsv(tsvText: string): FacilityTsvRow[] {
+function splitBullets(text: string): string[] {
+  const raw = text.replace(/\u2022/g, "•");
+  if (raw.includes("•")) {
+    return raw
+      .split("•")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+  if (/\b1\.\s/.test(raw)) {
+    return raw
+      .split(/\b\d+\.\s+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+  return raw.trim() ? [raw.trim()] : [];
+}
+
+function mapDomainToInsightCategory(domain: string): InsightCategory {
+  switch (norm(domain)) {
+    case "clinical":
+    case "clinical practice":
+      return "clinical";
+    case "operational":
+    case "operations":
+      return "op";
+    case "retention":
+      return "retention";
+    case "supply":
+    case "supply chain":
+      return "supply";
+    case "data":
+    case "data quality":
+      return "data";
+    case "outcomes":
+      return "outcomes";
+    default:
+      return "op";
+  }
+}
+
+export function parseFacilityTsv(tsvText: string): FacilityTsvPatch[] {
   const lines = tsvText
     .split(/\r?\n/)
     .map((l) => l.trimEnd())
@@ -47,66 +85,126 @@ export function parseFacilityTsv(tsvText: string): FacilityTsvRow[] {
   const header = parseTsvLine(lines[0]);
   const idx = (name: string) => header.findIndex((h) => norm(h) === norm(name));
 
-  // Header expected (first column is "#", which we ignore)
   const facilityI = idx("Facility");
   const categoryI = idx("Category");
-  const districtI = idx("District summary card");
-  const i1 = idx("Facility Card - Insight 1");
-  const i2 = idx("Facility Card - Insight 2");
-  const i3 = idx("Facility Card - Insight 3");
-  const v1 = idx("Verify on ground 1");
-  const v2 = idx("Verify on ground 2");
-  const v3 = idx("Verify on ground 3");
+  if (facilityI < 0 || categoryI < 0) return [];
 
-  const required = [facilityI, categoryI, districtI, i1, i2, i3, v1, v2, v3];
-  if (required.some((i) => i < 0)) return [];
+  const legacy = {
+    districtI: idx("District summary card"),
+    i1: idx("Facility Card - Insight 1"),
+    i2: idx("Facility Card - Insight 2"),
+    i3: idx("Facility Card - Insight 3"),
+    v1: idx("Verify on ground 1"),
+    v2: idx("Verify on ground 2"),
+    v3: idx("Verify on ground 3"),
+  };
+  const modern = {
+    needsI: idx("Facilities that need attention"),
+    concernTitleI: idx("Area of concern title"),
+    concernInsightI: idx("Area of concern insight"),
+    concernEvidenceI: idx("Area of concern evidence"),
+    concernDomainI: idx("Area of concern domain"),
+    verifyI: idx("Verify on the ground"),
+  };
 
-  const rows: FacilityTsvRow[] = [];
+  const isLegacy =
+    legacy.districtI >= 0 &&
+    legacy.i1 >= 0 &&
+    legacy.i2 >= 0 &&
+    legacy.i3 >= 0 &&
+    legacy.v1 >= 0 &&
+    legacy.v2 >= 0 &&
+    legacy.v3 >= 0;
+
+  const isModern =
+    modern.needsI >= 0 &&
+    modern.concernTitleI >= 0 &&
+    modern.concernInsightI >= 0 &&
+    modern.concernEvidenceI >= 0 &&
+    modern.concernDomainI >= 0 &&
+    modern.verifyI >= 0;
+
+  if (!isLegacy && !isModern) return [];
+
+  const patches: FacilityTsvPatch[] = [];
   for (const line of lines.slice(1)) {
     const cols = parseTsvLine(line);
-    rows.push({
-      facility: cols[facilityI] ?? "",
-      category: cols[categoryI] ?? "",
-      districtSummaryCard: cols[districtI] ?? "",
-      facilityCardInsight1: cols[i1] ?? "",
-      facilityCardInsight2: cols[i2] ?? "",
-      facilityCardInsight3: cols[i3] ?? "",
-      verify1: cols[v1] ?? "",
-      verify2: cols[v2] ?? "",
-      verify3: cols[v3] ?? "",
+    const facility = cols[facilityI] ?? "";
+    const category = cols[categoryI] ?? "";
+    const status = mapTsvCategoryToStatus(category);
+
+    let cardInsights: string[] = [];
+    let detailSummary: string[] = [];
+    let verify: string[] = [];
+    let concerns: InsightItem[] = [];
+
+    if (isLegacy) {
+      detailSummary = splitBullets(cols[legacy.districtI] ?? "");
+      cardInsights = [cols[legacy.i1] ?? "", cols[legacy.i2] ?? "", cols[legacy.i3] ?? ""].filter(Boolean);
+      verify = [cols[legacy.v1] ?? "", cols[legacy.v2] ?? "", cols[legacy.v3] ?? ""].filter(Boolean);
+    } else if (isModern) {
+      detailSummary = splitBullets(cols[modern.needsI] ?? "");
+      cardInsights = detailSummary.slice(0, 3);
+      verify = splitBullets(cols[modern.verifyI] ?? "");
+
+      const title = cols[modern.concernTitleI] ?? "";
+      const summary = cols[modern.concernInsightI] ?? "";
+      const evidence = splitBullets(cols[modern.concernEvidenceI] ?? "");
+      const domain = cols[modern.concernDomainI] ?? "";
+      if (title.trim() || summary.trim() || evidence.length) {
+        concerns = [
+          {
+            title: title.trim() || "Area of concern",
+            summary: summary.trim(),
+            evidence,
+            category: mapDomainToInsightCategory(domain),
+          },
+        ];
+      }
+    }
+
+    patches.push({
+      facility,
+      category,
+      status,
+      cardInsights,
+      detailSummary,
+      verify,
+      concerns,
     });
   }
-  return rows.filter((r) => r.facility.trim().length > 0);
+  return patches.filter((p) => p.facility.trim().length > 0);
 }
 
-export async function loadFacilityTsv(): Promise<FacilityTsvRow[]> {
+export async function loadFacilityTsv(): Promise<FacilityTsvPatch[]> {
   const res = await fetch(`${import.meta.env.BASE_URL}data.tsv`, { cache: "no-store" });
   if (!res.ok) return [];
   const text = await res.text();
   return parseFacilityTsv(text);
 }
 
-export function mergeFacilitiesFromTsv(base: Facility[], rows: FacilityTsvRow[]): Facility[] {
-  if (rows.length === 0) return base;
+export function mergeFacilitiesFromTsv(base: Facility[], patches: FacilityTsvPatch[]): Facility[] {
+  if (patches.length === 0) return base;
 
-  const byName = new Map(rows.map((r) => [norm(r.facility), r] as const));
-
+  const byName = new Map(patches.map((p) => [norm(p.facility), p] as const));
   return base.map((f) => {
-    const row = byName.get(norm(f.name));
-    if (!row) return f;
-
-    const status = mapTsvCategoryToStatus(row.category);
-    const cardInsights = [row.facilityCardInsight1, row.facilityCardInsight2, row.facilityCardInsight3].filter(Boolean);
-    const verify = [row.verify1, row.verify2, row.verify3].filter(Boolean);
-    const detailSummary = [row.districtSummaryCard].filter(Boolean);
+    const patch = byName.get(norm(f.name));
+    if (!patch) return f;
 
     return {
       ...f,
-      status: status ?? f.status,
-      cardInsights: cardInsights.length ? cardInsights : f.cardInsights,
-      detailSummary: detailSummary.length ? detailSummary : f.detailSummary,
-      verify: verify.length ? verify : f.verify,
+      status: patch.status ?? f.status,
+      cardInsights: patch.cardInsights.length ? patch.cardInsights : f.cardInsights,
+      detailSummary: patch.detailSummary.length ? patch.detailSummary : f.detailSummary,
+      verify: patch.verify.length ? patch.verify : f.verify,
+      concerns: patch.concerns.length ? patch.concerns : f.concerns,
     };
   });
+}
+
+export function restrictFacilitiesToTsv(base: Facility[], patches: FacilityTsvPatch[]): Facility[] {
+  if (patches.length === 0) return base;
+  const names = new Set(patches.map((p) => norm(p.facility)));
+  return base.filter((f) => names.has(norm(f.name)));
 }
 

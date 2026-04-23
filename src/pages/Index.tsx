@@ -6,7 +6,7 @@ import { useDismissed, usePinned, useVisited } from "@/hooks/useLocalState";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { loadFacilityTsv, mergeFacilitiesFromTsv } from "@/data/facilityTsv";
+import { loadFacilityTsv, mergeFacilitiesFromTsv, restrictFacilitiesToTsv } from "@/data/facilityTsv";
 
 type Filter = "all" | FacilityStatus;
 
@@ -29,24 +29,25 @@ export default function Index() {
   const { data: tsvRows } = useQuery({
     queryKey: ["facility-tsv"],
     queryFn: loadFacilityTsv,
-    staleTime: Infinity,
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
   });
 
-  const facilities = useMemo(() => mergeFacilitiesFromTsv(FACILITIES, tsvRows ?? []), [tsvRows]);
+  const facilities = useMemo(() => {
+    const merged = mergeFacilitiesFromTsv(FACILITIES, tsvRows ?? []);
+    return restrictFacilitiesToTsv(merged, tsvRows ?? []);
+  }, [tsvRows]);
+
+  const facilityCount = facilities.length;
+  const totalPatients = useMemo(() => facilities.reduce((sum, f) => sum + f.patients, 0), [facilities]);
 
   // Top 3 needs-attention — auto-refills when one is dismissed (always shows up to 3)
   const needsAttention = useMemo(
     () => getNeedsAttention(facilities, dismissed.set, pinned.set, 3),
     [dismissed.set, pinned.set, facilities],
   );
-  const needsIds = new Set(needsAttention.map((f) => f.id));
-
-  // "All facilities" pool excludes whatever is currently shown in needs-attention
-  const countsPool = useMemo(
-    () => facilities.filter((f) => !needsIds.has(f.id)),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [needsAttention],
-  );
+  const countsPool = facilities;
   const counts = useMemo(() => {
     const c: Record<Filter, number> = { all: countsPool.length, action: 0, risk: 0, target: 0, improving: 0, stagnating: 0, top: 0 };
     for (const f of countsPool) c[f.status]++;
@@ -59,7 +60,7 @@ export default function Index() {
       const ap = pinned.has(a.id) ? 1 : 0;
       const bp = pinned.has(b.id) ? 1 : 0;
       if (ap !== bp) return bp - ap;
-      return a.bpControl - b.bpControl;
+      return a.name.localeCompare(b.name);
     });
   }, [countsPool, filter, pinned]);
 
@@ -83,8 +84,8 @@ export default function Index() {
             District summary for April
           </h1>
           <p className="text-[12.5px] leading-[1.4] text-muted-foreground">
-            Sylhet District · {DISTRICT.month} · {DISTRICT.facilityCount} facilities ·{" "}
-            <span className="font-mono tnum">{DISTRICT.totalPatients.toLocaleString()}</span> patients
+            Sylhet District · {DISTRICT.month} · {facilityCount} facilities ·{" "}
+            <span className="font-mono tnum">{totalPatients.toLocaleString()}</span> patients
           </p>
         </header>
 

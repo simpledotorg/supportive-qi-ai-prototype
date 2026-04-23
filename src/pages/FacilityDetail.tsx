@@ -11,7 +11,7 @@ import { useNotes, useVisited } from "@/hooks/useLocalState";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { loadFacilityTsv, mergeFacilitiesFromTsv } from "@/data/facilityTsv";
+import { loadFacilityTsv, mergeFacilitiesFromTsv, restrictFacilitiesToTsv } from "@/data/facilityTsv";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 function formatToday(): string {
@@ -27,10 +27,15 @@ export default function FacilityDetail() {
   const { data: tsvRows } = useQuery({
     queryKey: ["facility-tsv"],
     queryFn: loadFacilityTsv,
-    staleTime: Infinity,
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
   });
 
-  const facilities = useMemo(() => mergeFacilitiesFromTsv(FACILITIES, tsvRows ?? []), [tsvRows]);
+  const facilities = useMemo(() => {
+    const merged = mergeFacilitiesFromTsv(FACILITIES, tsvRows ?? []);
+    return restrictFacilitiesToTsv(merged, tsvRows ?? []);
+  }, [tsvRows]);
   const facility = useMemo(() => facilities.find((f) => f.id === id), [facilities, id]);
   const { isVisited, toggleVisited } = useVisited();
   const { getNotes, addNote } = useNotes();
