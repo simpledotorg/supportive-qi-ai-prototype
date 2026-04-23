@@ -52,6 +52,127 @@
       font-family: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
     }
 
+    /* ── Lovable-style “District summary” card (main body) ───────────── */
+    .lovable-district-card {
+      background: var(--h360-surface);
+      border: 1px solid var(--h360-border);
+      border-radius: 12px;
+      padding: 14px;
+      font-family: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+    }
+
+    .lovable-district-title {
+      margin: 0 0 10px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+      color: var(--h360-fg);
+    }
+
+    .lovable-kpis {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .lovable-kpi {
+      border: 1px solid var(--h360-border);
+      background: var(--h360-surface-sunken);
+      border-radius: 10px;
+      padding: 10px 10px 9px;
+      min-width: 0;
+    }
+
+    .lovable-kpi-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--h360-muted-fg);
+      margin: 0 0 6px;
+      letter-spacing: 0.2px;
+    }
+
+    .lovable-kpi-delta {
+      font-family: 'IBM Plex Mono', ui-monospace, monospace;
+      font-size: 12px;
+      font-weight: 700;
+      margin: 0 0 2px;
+      color: var(--h360-fg);
+    }
+
+    .lovable-kpi-now {
+      font-family: 'IBM Plex Mono', ui-monospace, monospace;
+      font-size: 11.5px;
+      margin: 0;
+      color: var(--h360-muted-fg);
+    }
+
+    .lovable-section-title {
+      margin: 10px 0 8px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--h360-fg);
+    }
+
+    .lovable-attn-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    .lovable-attn-item {
+      border-radius: 10px;
+      background: var(--h360-surface);
+      padding: 10px 10px 9px;
+    }
+
+    .lovable-attn-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .lovable-attn-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--h360-fg);
+      margin: 0;
+    }
+
+    .lovable-pill {
+      flex-shrink: 0;
+      border-radius: 999px;
+      border: 1px solid color-mix(in srgb, var(--h360-bad) 30%, var(--h360-border));
+      background: color-mix(in srgb, var(--h360-bad) 12%, var(--h360-surface));
+      color: color-mix(in srgb, var(--h360-bad) 75%, var(--h360-fg));
+      padding: 4px 9px;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .lovable-attn-desc {
+      margin: 0;
+      font-size: 12.5px;
+      line-height: 1.45;
+      color: color-mix(in srgb, var(--h360-fg) 82%, transparent);
+    }
+
+    .lovable-district-cta {
+      margin-top: 12px;
+    }
+
+    @media (max-width: 700px) {
+      .lovable-kpis {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .h360-summary-left {
       flex: 1;
       min-width: 0;
@@ -420,8 +541,8 @@
         </div>
 
         <!-- District summary block -->
-        <div class="h360-summary-block">
-          <div class="h360-summary-left">
+        <!-- <div class="h360-summary-block"> -->
+          <!-- <div class="h360-summary-left">
             <h2 class="h360-summary-heading">District Summary</h2>
             <p class="h360-summary-desc">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu orci erat.
@@ -454,18 +575,17 @@
               </li>
             </ul>
 
-            <!-- Toggle button wires up the aside panel -->
+
             <button
               class="prototype-sidebar-toggle"
               type="button"
               aria-expanded="false"
-              id="sidebar-toggle"
             >
               View report
             </button>
           </div>
 
-          <!-- Stat tiles -->
+
           <div class="h360-summary-stats">
             <div class="h360-summary-stat-tile">
               <div class="h360-summary-stat-label">
@@ -497,13 +617,13 @@
               <div class="h360-summary-stat-value">14%</div>
               <div class="h360-summary-stat-sub" style="color:var(--h360-muted-fg)">38 visits · past 3mo</div>
             </div>
-          </div>
-        </div>
+          </div> -->
+        <!-- </div> -->
 
         <h2 class="columns-header">1. Overview indicators</h2>
 
-        <div class="columns-3">
-          <div class="card col-span-2">
+        <div class="columns-2">
+          <div class="card col-span-1">
             <div class="heading">
               <h3>Patients protected from heart attacks and strokes with world-class treatment</h3>
               <div class="figures">
@@ -517,6 +637,64 @@
               </div>
             </div>
           </div>
+
+          <div class="card lovable-district-card">
+            <h3 class="lovable-district-title">District summary</h3>
+
+            <div class="lovable-kpis">
+              <div class="lovable-kpi">
+                <p class="lovable-kpi-label">BP control</p>
+                <p class="lovable-kpi-delta">−2 pp</p>
+                <p class="lovable-kpi-now">now 54%</p>
+              </div>
+              <div class="lovable-kpi">
+                <p class="lovable-kpi-label">BP uncontrolled</p>
+                <p class="lovable-kpi-delta">+1 pp</p>
+                <p class="lovable-kpi-now">now 17%</p>
+              </div>
+              <div class="lovable-kpi">
+                <p class="lovable-kpi-label">Missed visit</p>
+                <p class="lovable-kpi-delta">+1 pp</p>
+                <p class="lovable-kpi-now">now 31%</p>
+              </div>
+            </div>
+
+            <h4 class="lovable-section-title">Facilities that need attention</h4>
+            <ul class="lovable-attn-list">
+              <li class="lovable-attn-item">
+                <div class="lovable-attn-top">
+                  <p class="lovable-attn-name">CC Chhatrish</p>
+                  <span class="lovable-pill">Critical</span>
+                </div>
+                <p class="lovable-attn-desc">BP control dropped sharply — 5 points in one month.</p>
+              </li>
+              <li class="lovable-attn-item">
+                <div class="lovable-attn-top">
+                  <p class="lovable-attn-name">CC Osmaninagar</p>
+                  <span class="lovable-pill">Critical</span>
+                </div>
+                <p class="lovable-attn-desc">BP control is the lowest in the district at 37%.</p>
+              </li>
+              <li class="lovable-attn-item">
+                <div class="lovable-attn-top">
+                  <p class="lovable-attn-name">UHC Fenchuganj</p>
+                  <span class="lovable-pill">Critical</span>
+                </div>
+                <p class="lovable-attn-desc">BP control is 38%. Many patients are not returning — 35% missed their last visit.</p>
+              </li>
+            </ul>
+
+            <div class="lovable-district-cta">
+              <button
+                class="prototype-sidebar-toggle"
+                type="button"
+                aria-expanded="false"
+              >
+                View report
+              </button>
+            </div>
+          </div>
+<!--         
           <div class="card">
             <div class="heading">
               <h3>Hypertension treatment cascade</h3>
@@ -568,10 +746,11 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
 
         <h2 class="columns-header spacer">2. Program management indicators</h2>
+
 
         <div class="card">
           <div class="heading">
@@ -1011,19 +1190,33 @@
   <!-- ── Sidebar toggle ─────────────────────────────────────────────── -->
   <script>
     (function () {
-      var toggle = document.getElementById("sidebar-toggle");
+      var toggles = Array.prototype.slice.call(document.querySelectorAll(".prototype-sidebar-toggle"));
       var layout = document.getElementById("prototype-layout");
       var aside  = document.getElementById("prototype-aside");
 
-      if (!toggle || !layout || !aside) return;
+      if (!toggles.length || !layout || !aside) return;
 
-      toggle.addEventListener("click", function () {
-        var open = !layout.classList.contains("prototype-sidebar-open");
+      function syncToggles(open) {
+        toggles.forEach(function (t) {
+          t.setAttribute("aria-expanded", open ? "true" : "false");
+          t.textContent = open ? "Close report" : "View report";
+        });
+      }
+
+      function setOpen(open) {
         layout.classList.toggle("prototype-sidebar-open", open);
         aside.classList.toggle("prototype-aside-open", open);
-        toggle.setAttribute("aria-expanded", open ? "true" : "false");
-        toggle.textContent = open ? "Close report" : "View report";
+        syncToggles(open);
+      }
+
+      toggles.forEach(function (toggle) {
+        toggle.addEventListener("click", function () {
+          var open = !layout.classList.contains("prototype-sidebar-open");
+          setOpen(open);
+        });
       });
+
+      syncToggles(layout.classList.contains("prototype-sidebar-open"));
     })();
   </script>
 
