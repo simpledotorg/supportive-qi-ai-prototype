@@ -410,12 +410,24 @@ export function priorityScore(f: Facility): number {
   return score;
 }
 
-// Rank facilities by need-attention priority (action + stagnating, new first, then BP)
+// Rank facilities by need-attention priority (status band first, then BP)
 export function rankNeedsAttention(facilities: Facility[]): Facility[] {
+  const statusRank: Record<FacilityStatus, number> = {
+    action: 0, // Critical
+    risk: 1, // At risk
+    stagnating: 2,
+    improving: 3,
+    target: 99,
+    top: 99,
+  };
+
   return [...facilities]
-    .filter((f) => f.status === "action" || f.status === "stagnating")
+    .filter((f) => f.status in statusRank && statusRank[f.status] < 99)
     .sort((a, b) => {
-      if (a.isNew !== b.isNew) return a.isNew ? -1 : 1;
+      const ar = statusRank[a.status];
+      const br = statusRank[b.status];
+      if (ar !== br) return ar - br;
+      // Within the same band, put lowest BP control first.
       return a.bpControl - b.bpControl;
     });
 }
@@ -430,9 +442,12 @@ export function getNeedsAttention(
 ): Facility[] {
   const ranked = rankNeedsAttention(facilities).filter((f) => !dismissed.has(f.id));
   const top = ranked.slice(0, limit);
+  // Keep the requested priority order, but float pinned within the selected set.
   return top.sort((a, b) => {
     const ap = pinned.has(a.id) ? 1 : 0;
     const bp = pinned.has(b.id) ? 1 : 0;
-    return bp - ap;
+    if (ap !== bp) return bp - ap;
+    // Stable-ish fallback
+    return 0;
   });
 }
