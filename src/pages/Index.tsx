@@ -5,6 +5,8 @@ import { FacilityCard } from "@/components/FacilityCard";
 import { useDismissed, usePinned, useVisited } from "@/hooks/useLocalState";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { loadFacilityTsv, mergeFacilitiesFromTsv } from "@/data/facilityTsv";
 
 type Filter = "all" | FacilityStatus;
 
@@ -24,16 +26,24 @@ export default function Index() {
   const visited = useVisited();
   const [filter, setFilter] = useState<Filter>("all");
 
+  const { data: tsvRows } = useQuery({
+    queryKey: ["facility-tsv"],
+    queryFn: loadFacilityTsv,
+    staleTime: Infinity,
+  });
+
+  const facilities = useMemo(() => mergeFacilitiesFromTsv(FACILITIES, tsvRows ?? []), [tsvRows]);
+
   // Top 3 needs-attention — auto-refills when one is dismissed (always shows up to 3)
   const needsAttention = useMemo(
-    () => getNeedsAttention(FACILITIES, dismissed.set, pinned.set, 3),
-    [dismissed.set, pinned.set],
+    () => getNeedsAttention(facilities, dismissed.set, pinned.set, 3),
+    [dismissed.set, pinned.set, facilities],
   );
   const needsIds = new Set(needsAttention.map((f) => f.id));
 
   // "All facilities" pool excludes whatever is currently shown in needs-attention
   const countsPool = useMemo(
-    () => FACILITIES.filter((f) => !needsIds.has(f.id)),
+    () => facilities.filter((f) => !needsIds.has(f.id)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [needsAttention],
   );
