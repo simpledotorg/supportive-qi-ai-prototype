@@ -86,7 +86,7 @@ export default function FacilityDetail() {
         <div className="mb-[18px] flex items-center gap-3">
           <button
             type="button"
-            onClick={() => navigate("/")}
+            onClick={() => navigate(-1)}
             aria-label="Back"
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border bg-surface text-foreground/70 transition-colors hover:bg-surface-sunken"
           >
