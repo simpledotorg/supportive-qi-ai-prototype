@@ -11,10 +11,17 @@ interface Props {
   stats: DStat[];
 }
 
-function formatDelta(delta: number) {
-  if (delta === 0) return "0 pp";
-  const sign = delta > 0 ? "+" : "\u2212";
-  return `${sign}${Math.abs(delta)} pp`;
+function formatDelta(delta: number): JSX.Element {
+  if (delta === 0) return <span>0%</span>;
+  const arrow = delta > 0 ? "▲" : "▼";
+  return (
+    <span className="inline-flex items-baseline">
+      <span className="inline-flex w-[1em] shrink-0 justify-center text-[0.72em] leading-none">
+        <span className="relative -top-[3px]">{arrow}</span>
+      </span>
+      <span>{Math.abs(delta)}%</span>
+    </span>
+  );
 }
 
 function deltaTone(delta: number, goodDir: "up" | "down"): "good" | "bad" | "flat" {
@@ -32,7 +39,7 @@ const TONE_CLS: Record<"good" | "bad" | "flat", string> = {
 
 /**
  * Delta-first stat tile grid. The big number is the month-over-month delta
- * in pp, color-coded by whether it's a good or bad direction. The current
+ * in %, color-coded by whether it's a good or bad direction. The current
  * value sits underneath in muted text. Sparkline anchors the trend.
  */
 export function DStatGrid({ stats }: Props) {
