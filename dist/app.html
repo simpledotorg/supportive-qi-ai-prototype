@@ -21,11 +21,25 @@
   <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/70dab9bc-249e-45f6-b111-1041ebb0b0d7">
   <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/70dab9bc-249e-45f6-b111-1041ebb0b0d7">
   <meta name="twitter:card" content="summary_large_image">
-  <script type="module" crossorigin src="/supportive-qi-ai-prototype/assets/main-CSIG2VvZ.js"></script>
+  
+  <script type="module" crossorigin src="/supportive-qi-ai-prototype/assets/main-DlGwNtNM.js"></script>
   <link rel="stylesheet" crossorigin href="/supportive-qi-ai-prototype/assets/main-CHUP2Plh.css">
 </head>
 
   <body>
+    <script>
+      // GitHub Pages SPA deep-link support (works with public/404.html).
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        var p = params.get("p");
+        if (!p) return;
+        var q = params.get("q");
+        params.delete("p");
+        params.delete("q");
+        var newPath = p + (q ? "?" + q : "") + (window.location.hash || "");
+        window.history.replaceState(null, "", newPath);
+      })();
+    </script>
     <div id="root"></div>
   </body>
 </html>

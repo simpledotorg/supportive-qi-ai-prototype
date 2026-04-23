@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redirecting…</title>
+    <meta http-equiv="refresh" content="0;url=./" />
+    <script>
+      (function () {
+        var l = window.location;
+        // Project pages are served from /<repo-name>/... on GitHub Pages.
+        var parts = l.pathname.split("/").filter(Boolean);
+        var base = parts.length > 0 ? "/" + parts[0] + "/" : "/";
+        var pathAfterBase = parts.slice(1).join("/");
+        var redirect =
+          base +
+          "?p=/" +
+          encodeURIComponent(pathAfterBase) +
+          (l.search ? "&q=" + encodeURIComponent(l.search.slice(1)) : "") +
+          (l.hash || "");
+        l.replace(redirect);
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
