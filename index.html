@@ -439,7 +439,7 @@
       }
     }
   </style>
-  <script type="module" crossorigin src="/supportive-qi-ai-prototype/assets/main-CVbr0HQ2.js"></script>
+  <script type="module" crossorigin src="/supportive-qi-ai-prototype/assets/main-Cl7bhC-j.js"></script>
   <link rel="stylesheet" crossorigin href="/supportive-qi-ai-prototype/assets/main-Dzr7uW0k.css">
 </head>
 
@@ -1266,8 +1266,8 @@
         return href;
       }
 
-      function pushRoute(pathname) {
-        window.history.pushState({}, "", pathname);
+      function pushRoute(pathname, state) {
+        window.history.pushState(state != null ? state : {}, "", pathname);
         try {
           window.dispatchEvent(new PopStateEvent("popstate"));
         } catch (e) {
@@ -1281,7 +1281,12 @@
         if (!id) return;
         setOpen(true);
         var base = baseHref();
-        pushRoute(base + "facility/" + id);
+        // Two-step history: app root (marks intermediate hop for shell) then facility, so the
+        // in-app back button can POP to React "/" and scroll restoration still applies.
+        pushRoute(base, { prevstep: true });
+        window.setTimeout(function () {
+          pushRoute(base + "facility/" + id);
+        }, 0);
       }
 
       function initDistrictSummaryLinks() {
