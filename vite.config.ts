@@ -5,6 +5,9 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  // When deploying to GitHub Pages the app is served from /<repo-name>/.
+  // Set VITE_BASE env var in CI (e.g. /hearts360ai/) or leave unset for local dev.
+  base: process.env.VITE_BASE ?? "/",
   server: {
     host: "::",
     port: 8080,
