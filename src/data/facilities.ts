@@ -66,7 +66,7 @@ export interface Facility {
 }
 
 // Current logged-in user (for new notes the manager adds in the field)
-export const CURRENT_USER = "Dr Rhati";
+export const CURRENT_USER = "Dr Jhali";
 
 // District-level current numbers from the HTML
 export const DISTRICT = {
@@ -179,7 +179,10 @@ const seeds: Seed[] = [
     ],
     strengths: [],
     verify: ["Confirm the next drug delivery and how long the supply will last.", "Track stock weekly for the next 2 months. If supply is steady, BP control should rise."],
-    notes: [],
+    notes: [
+      { date: "02-Feb-2026", author: "Dr Amrita", body: "Pharmacy shelf check: Losartan 50mg low; amlodipine available. Team is dispensing 2-week refills to stretch stock." },
+      { date: "19-Mar-2026", author: "Dr Rhati", body: "Discussed stock reorder cadence with in-charge. Request raised to district store; advised to align requisition with patient run-rate." },
+    ],
   },
   { name: "CC Lamagangapur", patients: 179, bpControl: 41, bpControlT: -3, bpUncontrolled: 35, bpUncontrolledT: 1, missed3m: 33, missed3mT: 1, missed12m: 11, titration: 26, titrationT: -1, statins: 36, statinsT: 0, fudging: 10, fudgingT: 0, drugStock: "partial", status: "action", monthsFlagged: 2, isNew: false,
     cardInsights: ["Medicines are only adjusted for 1 in 4 patients.", "Drug stock is partial. Patients are not coming back.", "33% missed visits — high for this size."],
@@ -189,7 +192,11 @@ const seeds: Seed[] = [
     ],
     strengths: [],
     verify: ["Find out which medicines are out of stock.", "Check whether overdue patients are being called.", "Ask medical officers if they change prescriptions when patients have symptoms."],
-    notes: [],
+    notes: [
+      { date: "11-Feb-2026", author: "Dr Amrita", body: "Checked dispensing records: patients often receive partial refills when stock is tight. Suggested aligning refill duration with expected delivery dates." },
+      { date: "04-Apr-2026", author: "Dr Sumara", body: "Observed MO hesitant to titrate when only one drug available. Recommended documenting alternative regimen options for common stock-out scenarios." },
+      { date: "14-Apr-2026", author: "Dr Rhati", body: "Reviewed overdue line list with staff; agreed to prioritize calls for uncontrolled patients first and track outcomes weekly." },
+    ],
   },
   { name: "CC Danaram", patients: 167, bpControl: 43, bpControlT: 0, bpUncontrolled: 34, bpUncontrolledT: 0, missed3m: 25, missed3mT: -1, missed12m: 8, titration: 35, titrationT: 1, statins: 44, statinsT: 0, fudging: 5, fudgingT: 0, drugStock: "full", status: "risk", monthsFlagged: 0, isNew: false,
     cardInsights: ["BP control is 43%, but patients are coming in.", "Drug stock is full and fudging is low.", "Medicines are not being adjusted. This is a clinical practice issue."],
@@ -201,7 +208,10 @@ const seeds: Seed[] = [
       { title: "Strong patient retention", category: "retention", summary: "Missed visit rate is among the best in the district. Patients are engaged with the facility.", evidence: ["Missed visits at 25%, down 1 pp", "Top 10 facility for retention", "Follow-up calls made consistently"] },
     ],
     verify: ["Sample 10 patients with high BP at the last 2 visits. Were medicines changed?", "Talk to the medical officer about when they adjust medicines."],
-    notes: [],
+    notes: [
+      { date: "07-Feb-2026", author: "Dr Sumara", body: "Observed clinic flow: BP measured quickly during peak hours. Suggested re-check protocol for borderline high readings before clinician review." },
+      { date: "28-Mar-2026", author: "Dr Amrita", body: "Chart sample (n=12) showed limited dose escalation. Shared titration pocket card with MO and agreed to review uncontrolled list weekly." },
+    ],
   },
   { name: "CC Shah Arpin", patients: 106, bpControl: 43, bpControlT: -2, bpUncontrolled: 35, bpUncontrolledT: 1, missed3m: 29, missed3mT: 0, missed12m: 10, titration: 30, titrationT: 0, statins: 38, statinsT: 0, fudging: 7, fudgingT: 0, drugStock: "full", status: "risk", monthsFlagged: 0, isNew: false,
     cardInsights: ["BP control is 43% even though drug stock is full.", "Small facility (106 patients). A full chart review is possible.", "Medicines may not be getting adjusted enough."],
@@ -261,6 +271,7 @@ const seeds: Seed[] = [
     verify: ["Ask the team to write down the exact reminder call script.", "Share the approach with CC Jamalpur and CC Hossainpur."],
     notes: [
       { date: "10-Apr-2026", author: "Dr Rhati", body: "Visited. Facility in-charge described a simple script: call the day before, confirm patient has medicines at home, remind about appointment time. Documenting for replication." },
+      { date: "12-Apr-2026", author: "Dr Sumara", body: "Call log reviewed: entries include outcome and next action. Recommended adding a 'reachable/not reachable' tick box to speed documentation." },
     ],
   },
   { name: "CC Jamalpur", patients: 145, bpControl: 58, bpControlT: 5, bpUncontrolled: 24, bpUncontrolledT: -2, missed3m: 26, missed3mT: -1, missed12m: 7, titration: 40, titrationT: 2, statins: 48, statinsT: 1, fudging: 5, fudgingT: 0, drugStock: "full", status: "improving", monthsFlagged: 0, isNew: false,
@@ -293,6 +304,7 @@ const seeds: Seed[] = [
     verify: ["Ask the medical officer to share their approach to adjusting medicines.", "Consider arranging a visit for nearby facility staff to learn from them."],
     notes: [
       { date: "08-Apr-2026", author: "Dr Rhati", body: "Excellent titration practice. MO does chart review each morning for uncontrolled patients. Worth replicating." },
+      { date: "09-Apr-2026", author: "Dr Amrita", body: "Verified drug stock card and expiry dates; no imminent expiries. Suggested keeping a small buffer stock for peak weeks." },
     ],
   },
   { name: "CC Tirasigoan", patients: 123, bpControl: 67, bpControlT: -1, bpUncontrolled: 19, bpUncontrolledT: 0, missed3m: 24, missed3mT: 0, missed12m: 6, titration: 42, titrationT: 0, statins: 50, statinsT: 0, fudging: 4, fudgingT: 0, drugStock: "full", status: "target", monthsFlagged: 0, isNew: false,
@@ -303,7 +315,11 @@ const seeds: Seed[] = [
       { title: "Stable, on target", category: "outcomes", summary: "Small month-to-month changes are normal. Nothing to act on.", evidence: ["BP control at 67% — above target", "All indicators stable", "Drug stock full"] },
     ],
     verify: ["No action needed this month."],
-    notes: [],
+    notes: [
+      { date: "06-Feb-2026", author: "Dr Rhati", body: "Quick spot-check: BP cuffs calibrated and register entries complete. No immediate issues flagged." },
+      { date: "21-Mar-2026", author: "Dr Sumara", body: "Observed patient flow was smooth; suggested a monthly mini-audit of 10 uncontrolled charts to keep titration consistent." },
+      { date: "17-Apr-2026", author: "Dr Amrita", body: "Stock card review: adequate buffer maintained. Recommended keeping reorder date visible on the wall to avoid last-minute requisitions." },
+    ],
   },
   { name: "CC Hakurbazar", patients: 122, bpControl: 69, bpControlT: 0, bpUncontrolled: 18, bpUncontrolledT: 0, missed3m: 24, missed3mT: 0, missed12m: 6, titration: 42, titrationT: 0, statins: 50, statinsT: 0, fudging: 4, fudgingT: 0, drugStock: "full", status: "target", monthsFlagged: 0, isNew: false,
     cardInsights: ["BP control is 69% — above target.", "No change from last month.", "Clean data, full stock, balanced indicators."],
@@ -387,6 +403,7 @@ const seeds: Seed[] = [
     verify: ["Document the new patient follow-up protocol in detail.", "Roll out the practice to other facilities."],
     notes: [
       { date: "15-Mar-2026", author: "Dr Rhati", body: "Documented their new patient follow-up: monthly visits for first 3 months with mandatory BP check and adherence discussion. Rolling out to 5 other facilities as pilot." },
+      { date: "16-Mar-2026", author: "Dr Sumara", body: "Observed counselling: staff use a simple 3-question adherence check. Recommend sharing script with neighboring CCs." },
     ],
   },
 ];
@@ -410,12 +427,24 @@ export function priorityScore(f: Facility): number {
   return score;
 }
 
-// Rank facilities by need-attention priority (action + stagnating, new first, then BP)
+// Rank facilities by need-attention priority (status band first, then BP)
 export function rankNeedsAttention(facilities: Facility[]): Facility[] {
+  const statusRank: Record<FacilityStatus, number> = {
+    action: 0, // Critical
+    risk: 1, // At risk
+    stagnating: 2,
+    improving: 3,
+    target: 99,
+    top: 99,
+  };
+
   return [...facilities]
-    .filter((f) => f.status === "action" || f.status === "stagnating")
+    .filter((f) => f.status in statusRank && statusRank[f.status] < 99)
     .sort((a, b) => {
-      if (a.isNew !== b.isNew) return a.isNew ? -1 : 1;
+      const ar = statusRank[a.status];
+      const br = statusRank[b.status];
+      if (ar !== br) return ar - br;
+      // Within the same band, put lowest BP control first.
       return a.bpControl - b.bpControl;
     });
 }
@@ -430,9 +459,12 @@ export function getNeedsAttention(
 ): Facility[] {
   const ranked = rankNeedsAttention(facilities).filter((f) => !dismissed.has(f.id));
   const top = ranked.slice(0, limit);
+  // Keep the requested priority order, but float pinned within the selected set.
   return top.sort((a, b) => {
     const ap = pinned.has(a.id) ? 1 : 0;
     const bp = pinned.has(b.id) ? 1 : 0;
-    return bp - ap;
+    if (ap !== bp) return bp - ap;
+    // Stable-ish fallback
+    return 0;
   });
 }
