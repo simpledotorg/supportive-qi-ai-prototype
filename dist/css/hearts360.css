@@ -53,7 +53,7 @@ body {
   /* background: var(--h360-surface); */
   /* border-left: 1px solid var(--h360-border);
   border-right: 1px solid var(--h360-border); */
-  padding: 0 18px 80px;
+  padding: 20px 18px 80px;
   overflow-y: scroll;
 }
 
