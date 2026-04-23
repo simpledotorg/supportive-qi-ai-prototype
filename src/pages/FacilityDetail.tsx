@@ -144,7 +144,7 @@ export default function FacilityDetail() {
         )}
 
         {/* Verify */}
-        <div className="mb-5 rounded-lg border bg-surface px-3.5 py-3.5">
+        <div className="mb-5">
           <h4 className="mb-2 text-[13.5px] font-bold">Verify on the ground</h4>
           <ul className="space-y-0">
             {facility.verify.map((v, idx) => (
