@@ -19,7 +19,7 @@ export function FacilityCard({ facility, showDismiss, pinned, visited, onPin, on
     <Link
       to={`/facility/${facility.id}`}
       className={cn(
-        "relative block rounded-lg border bg-surface p-3.5 transition-colors hover:border-strong",
+        "relative block rounded-lg border bg-surface p-3.5 no-underline transition-colors hover:border-strong hover:no-underline",
         pinned && "border-strong",
         visited && "opacity-55",
       )}

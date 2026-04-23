@@ -28,8 +28,8 @@ export default function FacilityDetail() {
 
   if (!facility) {
     return (
-      <main className="min-h-screen bg-background">
-        <div className="mx-auto max-w-[420px] p-6">
+      <main className="min-h-screen">
+        <div className="w-full">
           <p className="mb-3 text-sm">Facility not found.</p>
           <Link to="/" className="text-sm underline">Back to district summary</Link>
         </div>
@@ -65,8 +65,8 @@ export default function FacilityDetail() {
   };
 
   return (
-    <main className="min-h-screen bg-background">
-      <div className="mx-auto min-h-screen max-w-[420px] animate-in fade-in slide-in-from-right-4 border-x border-border bg-surface px-[18px] pb-20 pt-5 duration-200 sm:my-6 sm:rounded-xl sm:border">
+    <main className="min-h-screen">
+      <div className="min-h-screen w-full animate-in fade-in slide-in-from-right-4 duration-200">
         {/* Header */}
         <div className="mb-[18px] flex items-center gap-3">
           <button
