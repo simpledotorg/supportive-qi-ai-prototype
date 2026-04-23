@@ -550,7 +550,7 @@
 
         <div class="header">
           <h1>River District</h1>
-          <div class="date-updated">Data last updated: 5-Aug-2024</div>
+          <div class="date-updated">Data last updated: 23-Apr-2026</div>
         </div>
 
         <!-- District summary block -->
@@ -683,17 +683,17 @@
               </li>
               <li class="lovable-attn-item">
                 <div class="lovable-attn-top">
-                  <p class="lovable-attn-name">CC Osmaninagar</p>
+                  <p class="lovable-attn-name">CC Tirasigoan</p>
                   <span class="lovable-pill">Critical</span>
                 </div>
-                <p class="lovable-attn-desc">BP control is the lowest in the district at 37%.</p>
+                <p class="lovable-attn-desc">Drug stock critically low at 14 days; immediate resupply needed.</p>
               </li>
               <li class="lovable-attn-item">
                 <div class="lovable-attn-top">
-                  <p class="lovable-attn-name">UHC Fenchuganj</p>
+                  <p class="lovable-attn-name">CC Jamalpur</p>
                   <span class="lovable-pill">Critical</span>
                 </div>
-                <p class="lovable-attn-desc">BP control is 38%. Many patients are not returning — 35% missed their last visit.</p>
+                <p class="lovable-attn-desc">BP control at 53%; declined 7% last month.</p>
               </li>
             </ul>
 
@@ -1222,6 +1222,77 @@
         syncToggles(open);
       }
 
+      function idOf(name) {
+        return String(name || "")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "");
+      }
+
+      function baseHref() {
+        var base = document.querySelector("base");
+        var href = base && base.getAttribute("href");
+        href = href || "/";
+        if (href.charAt(href.length - 1) !== "/") href += "/";
+        return href;
+      }
+
+      function pushRoute(pathname) {
+        window.history.pushState({}, "", pathname);
+        try {
+          window.dispatchEvent(new PopStateEvent("popstate"));
+        } catch (e) {
+          // Fallback for environments where PopStateEvent isn't constructible.
+          window.dispatchEvent(new Event("popstate"));
+        }
+      }
+
+      function openFacilityByName(name) {
+        var id = idOf(name);
+        if (!id) return;
+        setOpen(true);
+        var base = baseHref();
+        pushRoute(base + "facility/" + id);
+      }
+
+      function initDistrictSummaryLinks() {
+        var items = Array.prototype.slice.call(document.querySelectorAll(".lovable-attn-item"));
+        if (!items.length) return;
+
+        items.forEach(function (item) {
+          item.setAttribute("role", "button");
+          item.setAttribute("tabindex", "0");
+          item.style.cursor = "pointer";
+        });
+
+        // Click anywhere on the row.
+        document.addEventListener("click", function (event) {
+          var target = event.target;
+          if (!target) return;
+          var item = target.closest && target.closest(".lovable-attn-item");
+          if (!item) return;
+          var nameEl = item.querySelector && item.querySelector(".lovable-attn-name");
+          var name = (nameEl && nameEl.textContent ? nameEl.textContent : "").trim();
+          if (!name) return;
+          event.preventDefault();
+          openFacilityByName(name);
+        });
+
+        // Keyboard activation.
+        document.addEventListener("keydown", function (event) {
+          if (!event) return;
+          var key = event.key;
+          if (key !== "Enter" && key !== " ") return;
+          var active = document.activeElement;
+          if (!active || !(active.classList && active.classList.contains("lovable-attn-item"))) return;
+          var nameEl = active.querySelector && active.querySelector(".lovable-attn-name");
+          var name = (nameEl && nameEl.textContent ? nameEl.textContent : "").trim();
+          if (!name) return;
+          event.preventDefault();
+          openFacilityByName(name);
+        });
+      }
+
       toggles.forEach(function (toggle) {
         toggle.addEventListener("click", function () {
           var open = !layout.classList.contains("prototype-sidebar-open");
@@ -1229,6 +1300,7 @@
         });
       });
 
+      initDistrictSummaryLinks();
       syncToggles(layout.classList.contains("prototype-sidebar-open"));
     })();
   </script>
