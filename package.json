@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
-    "build:gh-pages": "VITE_BASE=/${npm_package_name}/ vite build",
+    "build:gh-pages": "VITE_BASE=/supportive-qi-ai-prototype/ vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
