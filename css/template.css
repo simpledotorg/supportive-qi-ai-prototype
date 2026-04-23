@@ -407,6 +407,7 @@ main {
   background: #ffffff;
   border: 1px solid #cbcbcb;
   border-radius: 8px;
+  margin-top: 12px;
 
   &&.blank {
     background: rgba(0, 0, 0, 0.05);
