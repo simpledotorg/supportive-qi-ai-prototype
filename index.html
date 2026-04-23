@@ -1257,11 +1257,27 @@
       }
 
       function baseHref() {
-        var base = document.querySelector("base");
-        var href = base && base.getAttribute("href");
-        href = href || "/";
-        if (href.charAt(href.length - 1) !== "/") href += "/";
-        return href;
+        var el = document.querySelector("base");
+        var href = el && el.getAttribute("href");
+        if (href) {
+          href = href.trim();
+          if (href.charAt(href.length - 1) !== "/") href += "/";
+          return href;
+        }
+        // GitHub Pages: Vite build emits <script type="module" src="/<repo>/assets/main-*.js">.
+        // Without a <base> tag, default "/" breaks district-summary links (they must use the same
+        // root as BrowserRouter basename / import.meta.env.BASE_URL).
+        var scripts = document.getElementsByTagName("script");
+        for (var i = 0; i < scripts.length; i++) {
+          var s = scripts[i];
+          if (s.type !== "module" || !s.src) continue;
+          try {
+            var path = new URL(s.src, window.location.href).pathname;
+            var ix = path.indexOf("/assets/");
+            if (ix !== -1) return path.slice(0, ix + 1);
+          } catch (err) {}
+        }
+        return "/";
       }
 
       function pushRoute(pathname, state) {
