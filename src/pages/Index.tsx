@@ -65,8 +65,8 @@ export default function Index() {
   };
 
   return (
-    <main className="min-h-screen bg-background">
-      <div className="mx-auto min-h-screen max-w-[420px] border-x border-border bg-surface px-[18px] pb-20 pt-5 sm:my-6 sm:rounded-xl sm:border">
+    <main className="min-h-screen">
+      <div className="min-h-screen w-full">
         {/* Header */}
         <header className="mb-5">
           <h1 className="mb-[3px] text-[20px] font-bold leading-tight tracking-[-0.3px]">
@@ -124,8 +124,8 @@ export default function Index() {
         <h2 className="mb-2.5 mt-5 text-[13px] font-bold">All facilities</h2>
 
         {/* Filter chips */}
-        <div className="-mx-[18px] mb-3 overflow-x-auto px-[18px]">
-          <div className="flex gap-1.5">
+        <div className="-mx-[18px] mb-3 px-[18px]">
+          <div className="flex flex-wrap gap-1.5">
             {FILTERS.map((f) => {
               const active = filter === f.id;
               const count = counts[f.id];
@@ -136,7 +136,7 @@ export default function Index() {
                   onClick={() => setFilter(f.id)}
                   aria-pressed={active}
                   className={cn(
-                    "shrink-0 rounded-full border px-3 py-1.5 text-[11.5px] font-medium transition-colors",
+                    "rounded-full border px-3 py-1.5 text-[11.5px] font-medium transition-colors",
                     active
                       ? "border-foreground bg-foreground text-background"
                       : "border-border bg-surface text-foreground hover:bg-surface-sunken",
