@@ -1,0 +1,179 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===========================================================
+   Facility Review design system
+   - Neutral warm-gray surfaces
+   - Two-color signaling: red = bad, green = good
+   - All colors HSL
+   =========================================================== */
+
+@layer base {
+  :root {
+    /* Warm neutral surfaces */
+    --background: 60 11% 96%;          /* #F5F5F3 page */
+    --surface: 0 0% 100%;              /* card */
+    --surface-sunken: 60 9% 93%;       /* subtle inset / chip */
+    --foreground: 0 0% 11%;            /* near-black text */
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 11%;
+
+    --primary: 0 0% 11%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 60 9% 93%;
+    --secondary-foreground: 0 0% 20%;
+
+    --muted: 60 9% 93%;
+    --muted-foreground: 0 0% 40%;
+
+    --accent: 60 9% 93%;
+    --accent-foreground: 0 0% 20%;
+
+    /* Signaling — only red and green carry meaning */
+    --bad: 0 60% 39%;                  /* #C53030 */
+    --bad-foreground: 0 0% 100%;
+    --bad-soft: 0 65% 96%;
+    --bad-soft-foreground: 0 60% 30%;
+
+    --good: 145 47% 28%;               /* #276749 */
+    --good-foreground: 0 0% 100%;
+    --good-soft: 145 40% 94%;
+    --good-soft-foreground: 145 47% 22%;
+
+    /* Amber for warnings / risk */
+    --amber-bg: 60 100% 97%;           /* #FFFFF0 */
+    --amber-border: 53 97% 87%;        /* #FEFCBF */
+    --amber-text: 32 73% 34%;          /* #975A16 */
+
+    /* Insight category palette (bg + text pairs) */
+    --cat-op-bg: 213 60% 95%;          /* #EBF2FA */
+    --cat-op-text: 224 71% 40%;        /* #1E40AF */
+    --cat-retention-bg: 38 86% 95%;    /* #FEF5E7 */
+    --cat-retention-text: 28 80% 30%;  /* #92400E */
+    --cat-clinical-bg: 264 71% 95%;    /* #F3EDFC */
+    --cat-clinical-text: 263 70% 42%;  /* #5B21B6 */
+    --cat-supply-bg: 0 75% 95%;        /* #FDECEC */
+    --cat-supply-text: 0 70% 35%;      /* #991B1B */
+    --cat-data-bg: 45 16% 93%;         /* #F1F0EB */
+    --cat-data-text: 30 7% 32%;        /* #57534E */
+    --cat-outcomes-bg: 142 50% 93%;    /* #E6F4EC */
+    --cat-outcomes-text: 142 65% 21%;  /* #14532D */
+
+    --destructive: 0 60% 39%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 60 6% 86%;
+    --border-strong: 60 5% 76%;
+    --input: 60 6% 86%;
+    --ring: 0 0% 30%;
+
+    --radius: 0.5rem;
+
+    /* Sidebar (unused but preserved) */
+    --sidebar-background: 60 11% 96%;
+    --sidebar-foreground: 0 0% 20%;
+    --sidebar-primary: 0 0% 11%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 60 9% 93%;
+    --sidebar-accent-foreground: 0 0% 20%;
+    --sidebar-border: 60 6% 86%;
+    --sidebar-ring: 0 0% 30%;
+  }
+
+  .dark {
+    /* Dark unused in this prototype — kept consistent for shadcn */
+    --background: 0 0% 8%;
+    --foreground: 0 0% 96%;
+    --surface: 0 0% 11%;
+    --surface-sunken: 0 0% 14%;
+    --card: 0 0% 11%;
+    --card-foreground: 0 0% 96%;
+    --popover: 0 0% 11%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 0 0% 96%;
+    --primary-foreground: 0 0% 11%;
+    --secondary: 0 0% 16%;
+    --secondary-foreground: 0 0% 96%;
+    --muted: 0 0% 16%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 0 0% 16%;
+    --accent-foreground: 0 0% 96%;
+    --bad: 0 60% 50%;
+    --bad-foreground: 0 0% 100%;
+    --bad-soft: 0 40% 18%;
+    --bad-soft-foreground: 0 70% 80%;
+    --good: 145 40% 45%;
+    --good-foreground: 0 0% 100%;
+    --good-soft: 145 30% 16%;
+    --good-soft-foreground: 145 40% 80%;
+    --destructive: 0 60% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 22%;
+    --border-strong: 0 0% 32%;
+    --input: 0 0% 22%;
+    --ring: 0 0% 70%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  .font-mono {
+    font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    font-feature-settings: "tnum";
+  }
+
+  /* Tabular numerals everywhere numbers are shown */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer utilities {
+  .bg-surface { background-color: hsl(var(--surface)); }
+  .bg-surface-sunken { background-color: hsl(var(--surface-sunken)); }
+  .border-strong { border-color: hsl(var(--border-strong)); }
+
+  .text-bad { color: hsl(var(--bad)); }
+  .bg-bad { background-color: hsl(var(--bad)); }
+  .bg-bad-soft { background-color: hsl(var(--bad-soft)); }
+  .text-bad-soft-foreground { color: hsl(var(--bad-soft-foreground)); }
+  .border-bad { border-color: hsl(var(--bad)); }
+
+  .text-good { color: hsl(var(--good)); }
+  .bg-good { background-color: hsl(var(--good)); }
+  .bg-good-soft { background-color: hsl(var(--good-soft)); }
+  .text-good-soft-foreground { color: hsl(var(--good-soft-foreground)); }
+  .border-good { border-color: hsl(var(--good)); }
+
+  /* Amber */
+  .bg-amber-bg { background-color: hsl(var(--amber-bg)); }
+  .border-amber-border { border-color: hsl(var(--amber-border)); }
+  .text-amber-text { color: hsl(var(--amber-text)); }
+
+  /* Category tags */
+  .cat-op { background-color: hsl(var(--cat-op-bg)); color: hsl(var(--cat-op-text)); }
+  .cat-retention { background-color: hsl(var(--cat-retention-bg)); color: hsl(var(--cat-retention-text)); }
+  .cat-clinical { background-color: hsl(var(--cat-clinical-bg)); color: hsl(var(--cat-clinical-text)); }
+  .cat-supply { background-color: hsl(var(--cat-supply-bg)); color: hsl(var(--cat-supply-text)); }
+  .cat-data { background-color: hsl(var(--cat-data-bg)); color: hsl(var(--cat-data-text)); }
+  .cat-outcomes { background-color: hsl(var(--cat-outcomes-bg)); color: hsl(var(--cat-outcomes-text)); }
+}
