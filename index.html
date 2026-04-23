@@ -135,14 +135,24 @@
     .lovable-attn-item {
       border-radius: var(--h360-radius);
       background: transparent;
-      padding: 0;
+      padding: 4px 6px;
+    }
+
+    .lovable-attn-item:hover {
+      background: color-mix(in srgb, var(--h360-surface-sunken) 50%, transparent);
+    }
+
+    .lovable-attn-item:focus-visible {
+      background: color-mix(in srgb, var(--h360-surface-sunken) 50%, transparent);
+      outline: 2px solid color-mix(in srgb, var(--h360-fg) 14%, transparent);
+      outline-offset: 2px;
     }
 
     .lovable-attn-top {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+      justify-content: flex-start;
+      gap: 8px;
       margin-bottom: 6px;
     }
 
@@ -151,7 +161,6 @@
       font-weight: 700;
       color: var(--h360-fg);
       margin: 0;
-      margin-top: 4px;
     }
 
     .lovable-pill {
