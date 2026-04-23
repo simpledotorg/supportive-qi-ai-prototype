@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { CURRENT_USER, FACILITIES, type FacilityNote } from "@/data/facilities";
@@ -40,6 +40,22 @@ export default function FacilityDetail() {
   const { isVisited, toggleVisited } = useVisited();
   const { getNotes, addNote } = useNotes();
   const [draft, setDraft] = useState("");
+
+  // Shell (summary list) uses history.pushState + popstate; ScrollToTopOnNavigate may restore
+  // a stale aside scroll. Run after that hook (child runs later) so facility always starts at top.
+  useLayoutEffect(() => {
+    if (!id) return;
+    const aside = document.getElementById("prototype-aside");
+    const goTop = () => {
+      if (aside) aside.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      else window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    };
+    goTop();
+    const raf = requestAnimationFrame(() => {
+      requestAnimationFrame(goTop);
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [id]);
 
   if (!facility) {
     return (
