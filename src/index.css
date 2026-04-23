@@ -136,10 +136,13 @@
   }
 
   #root {
-    @apply bg-background text-foreground antialiased;
+    @apply text-foreground antialiased;
+    background: transparent !important;
     font-family: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
     font-feature-settings: "ss01", "cv11";
     padding: 0 !important;
+    padding-top: 16px !important;
+    padding-bottom: 160px !important;
   }
 
   #root .font-mono {
