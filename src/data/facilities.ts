@@ -93,27 +93,13 @@ export const DISTRICT_INSIGHTS: { tone: "bad" | "good"; text: string }[] = [
   { tone: "good", text: "5 facilities improved by 2 points or more. Gungadiya and Paton gained 6 points each." },
 ];
 
-// Drug-stock days lookup matching the HTML's pool logic
-const stockDays: Record<DrugStock, number[]> = {
-  low: [8, 12, 5, 14],
-  partial: [22, 35, 28, 42, 30, 25],
-  full: [60, 75, 90, 110, 55, 80, 95, 70, 65, 100, 85, 72, 68, 88, 78, 58, 92, 120],
-};
-const stockIdx: Record<DrugStock, number> = { low: 0, partial: 0, full: 0 };
-function nextDays(s: DrugStock) {
-  const pool = stockDays[s];
-  const v = pool[stockIdx[s] % pool.length];
-  stockIdx[s]++;
-  return v;
-}
-
 const idOf = (name: string) =>
   name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
-type Seed = Omit<Facility, "id" | "daysStock">;
+type Seed = Omit<Facility, "id">;
 
 const seeds: Seed[] = [
-  { name: "CC Osmaninagar", patients: 1442, bpControl: 37, bpControlT: -4, bpUncontrolled: 42, bpUncontrolledT: 3, missed3m: 38, missed3mT: 2, missed12m: 14, titration: 22, titrationT: -3, statins: 35, statinsT: 0, fudging: 18, fudgingT: 2, drugStock: "partial", status: "action", monthsFlagged: 3, isNew: false,
+  { name: "CC Osmaninagar", patients: 1442, bpControl: 59, bpControlT: 6, bpUncontrolled: 28, bpUncontrolledT: -4, missed3m: 15, missed3mT: -1, missed12m: 14, titration: 83, titrationT: 1, statins: 81, statinsT: 3, fudging: 2.3, fudgingT: -0.2, drugStock: "full", daysStock: 88, status: "action", monthsFlagged: 3, isNew: false,
     cardInsights: ["BP control is the lowest in the district at 37%.", "Fudging is very high (18%). Real BP control may be even lower.", "Medicines are not being adjusted for patients with high BP."],
     detailSummary: ["Flagged for 3 months. Same issues keep appearing.", "Titration dropped to 22%. Fewer than 1 in 4 patients get their medicine adjusted."],
     concerns: [
@@ -129,7 +115,7 @@ const seeds: Seed[] = [
       { date: "05-Apr-2026", author: "Dr Sumara", body: "Junior doctor rotating out next month. May need to retrain the replacement." },
     ],
   },
-  { name: "UHC Fenchuganj", patients: 1313, bpControl: 38, bpControlT: -3, bpUncontrolled: 40, bpUncontrolledT: 2, missed3m: 35, missed3mT: 1, missed12m: 12, titration: 25, titrationT: -2, statins: 38, statinsT: 1, fudging: 15, fudgingT: 1, drugStock: "partial", status: "action", monthsFlagged: 2, isNew: false,
+  { name: "UHC Fenchuganj", patients: 1313, bpControl: 38, bpControlT: 15, bpUncontrolled: 38, bpUncontrolledT: 6, missed3m: 24, missed3mT: -10, missed12m: 12, titration: 59, titrationT: 15, statins: 34, statinsT: 11, fudging: 2.8, fudgingT: 0.3, drugStock: "full", daysStock: 115, status: "action", monthsFlagged: 2, isNew: false,
     cardInsights: ["BP control is 38%. Many patients are not returning — 35% missed their last visit.", "Medicines are only adjusted for 1 in 4 patients with high BP.", "Drug stock is partial. Fudging is high at 15%."],
     detailSummary: ["Patients are cycling in and out without treatment changes.", "Drug stock is partial. Only 1 in 4 patients with high BP get medicine changes."],
     concerns: [
@@ -143,7 +129,7 @@ const seeds: Seed[] = [
       { date: "22-Mar-2026", author: "Dr Rhati", body: "Pharmacy reports Amlodipine 5mg out of stock for 6 weeks. Requisition submitted to district store on 5-Mar, still pending." },
     ],
   },
-  { name: "CC Kacuya Bohor", patients: 153, bpControl: 39, bpControlT: -2, bpUncontrolled: 38, bpUncontrolledT: 1, missed3m: 34, missed3mT: 2, missed12m: 11, titration: 28, titrationT: 0, statins: 30, statinsT: 0, fudging: 12, fudgingT: 0, drugStock: "low", status: "stagnating", monthsFlagged: 4, isNew: false,
+  { name: "CC Kacuya Bohor", patients: 153, bpControl: 39, bpControlT: 15, bpUncontrolled: 23, bpUncontrolledT: 15, missed3m: 38, missed3mT: -13, missed12m: 11, titration: 41, titrationT: 10, statins: 59, statinsT: 1, fudging: 3.4, fudgingT: -0.3, drugStock: "full", daysStock: 119, status: "stagnating", monthsFlagged: 4, isNew: false,
     cardInsights: ["Drug stock has been low for 4 months.", "Patients are not coming because there are no medicines to collect.", "Previous flags have not led to a fix."],
     detailSummary: ["Drug stock has been low or partial since January.", "BP control has stayed below 45% for 4 months. Patients are not coming."],
     concerns: [
@@ -158,7 +144,7 @@ const seeds: Seed[] = [
       { date: "03-Apr-2026", author: "Dr Rhati", body: "Follow-up with district store. Delivery expected by end of April. Need to plan catch-up clinic once stock arrives." },
     ],
   },
-  { name: "CC Chhatrish", patients: 263, bpControl: 40, bpControlT: -5, bpUncontrolled: 36, bpUncontrolledT: 3, missed3m: 32, missed3mT: 0, missed12m: 10, titration: 30, titrationT: -2, statins: 42, statinsT: 0, fudging: 8, fudgingT: 0, drugStock: "full", status: "action", monthsFlagged: 1, isNew: true,
+  { name: "CC Chhatrish", patients: 263, bpControl: 54, bpControlT: 9, bpUncontrolled: 31, bpUncontrolledT: -2, missed3m: 18, missed3mT: -5, missed12m: 10, titration: 95, titrationT: 5, statins: 82, statinsT: 6, fudging: 1.2, fudgingT: 0, drugStock: "full", daysStock: 88, status: "action", monthsFlagged: 1, isNew: true,
     cardInsights: ["BP control dropped sharply — 5 points in one month.", "Drug stock is full, so medicines are not the problem.", "Something changed this month. Needs a visit to find out what.", "This is a new problem — first time being flagged."],
     detailSummary: ["BP control fell 5 points this month. This is a sudden change from a stable facility.", "Drug stock is full. The problem is likely clinical or staffing."],
     concerns: [
@@ -171,7 +157,7 @@ const seeds: Seed[] = [
       { date: "20-Apr-2026", author: "Dr Rhati", body: "First-time flag. No previous issues at this facility. Adding to priority visit list for this week." },
     ],
   },
-  { name: "CC Baraigram", patients: 123, bpControl: 41, bpControlT: -1, bpUncontrolled: 37, bpUncontrolledT: 1, missed3m: 30, missed3mT: 0, missed12m: 9, titration: 32, titrationT: 1, statins: 40, statinsT: 0, fudging: 6, fudgingT: 0, drugStock: "partial", status: "action", monthsFlagged: 2, isNew: false,
+  { name: "CC Baraigram", patients: 123, bpControl: 62, bpControlT: 7, bpUncontrolled: 23, bpUncontrolledT: -3, missed3m: 19, missed3mT: -7, missed12m: 9, titration: 95, titrationT: 6, statins: 91, statinsT: 9, fudging: 2.3, fudgingT: 0, drugStock: "full", daysStock: 82, status: "action", monthsFlagged: 2, isNew: false,
     cardInsights: ["BP control is 41%. Main problem is partial drug stock.", "Fudging is low (6%), so numbers are real.", "Could improve quickly if drug supply is steady."],
     detailSummary: ["Drug supply is not steady. When stock is partial, BP control drops.", "Other indicators are fine. Steady medicines should fix this."],
     concerns: [
@@ -184,7 +170,7 @@ const seeds: Seed[] = [
       { date: "19-Mar-2026", author: "Dr Rhati", body: "Discussed stock reorder cadence with in-charge. Request raised to district store; advised to align requisition with patient run-rate." },
     ],
   },
-  { name: "CC Lamagangapur", patients: 179, bpControl: 41, bpControlT: -3, bpUncontrolled: 35, bpUncontrolledT: 1, missed3m: 33, missed3mT: 1, missed12m: 11, titration: 26, titrationT: -1, statins: 36, statinsT: 0, fudging: 10, fudgingT: 0, drugStock: "partial", status: "action", monthsFlagged: 2, isNew: false,
+  { name: "CC Lamagangapur", patients: 179, bpControl: 41, bpControlT: 2, bpUncontrolled: 23, bpUncontrolledT: 5, missed3m: 36, missed3mT: -9, missed12m: 11, titration: 64, titrationT: 15, statins: 37, statinsT: 0, fudging: 3.1, fudgingT: -0.2, drugStock: "low", daysStock: 12, status: "action", monthsFlagged: 2, isNew: false,
     cardInsights: ["Medicines are only adjusted for 1 in 4 patients.", "Drug stock is partial. Patients are not coming back.", "33% missed visits — high for this size."],
     detailSummary: ["Medicines are only adjusted for 1 in 4 patients with high BP.", "Drug stock is partial. Missed visits at 33%."],
     concerns: [
@@ -198,7 +184,7 @@ const seeds: Seed[] = [
       { date: "14-Apr-2026", author: "Dr Rhati", body: "Reviewed overdue line list with staff; agreed to prioritize calls for uncontrolled patients first and track outcomes weekly." },
     ],
   },
-  { name: "CC Danaram", patients: 167, bpControl: 43, bpControlT: 0, bpUncontrolled: 34, bpUncontrolledT: 0, missed3m: 25, missed3mT: -1, missed12m: 8, titration: 35, titrationT: 1, statins: 44, statinsT: 0, fudging: 5, fudgingT: 0, drugStock: "full", status: "risk", monthsFlagged: 0, isNew: false,
+  { name: "CC Danaram", patients: 167, bpControl: 43, bpControlT: 8, bpUncontrolled: 32, bpUncontrolledT: -15, missed3m: 25, missed3mT: -6, missed12m: 8, titration: 45, titrationT: 12, statins: 36, statinsT: 3, fudging: 5.3, fudgingT: 0.2, drugStock: "partial", daysStock: 37, status: "risk", monthsFlagged: 0, isNew: false,
     cardInsights: ["BP control is 43%, but patients are coming in.", "Drug stock is full and fudging is low.", "Medicines are not being adjusted. This is a clinical practice issue."],
     detailSummary: ["Patients are showing up but BP is not improving.", "Drug stock is full and data is reliable. Issue is clinical practice."],
     concerns: [
@@ -213,7 +199,7 @@ const seeds: Seed[] = [
       { date: "28-Mar-2026", author: "Dr Amrita", body: "Chart sample (n=12) showed limited dose escalation. Shared titration pocket card with MO and agreed to review uncontrolled list weekly." },
     ],
   },
-  { name: "CC Shah Arpin", patients: 106, bpControl: 43, bpControlT: -2, bpUncontrolled: 35, bpUncontrolledT: 1, missed3m: 29, missed3mT: 0, missed12m: 10, titration: 30, titrationT: 0, statins: 38, statinsT: 0, fudging: 7, fudgingT: 0, drugStock: "full", status: "risk", monthsFlagged: 0, isNew: false,
+  { name: "CC Shah Arpin", patients: 106, bpControl: 66, bpControlT: 7, bpUncontrolled: 24, bpUncontrolledT: -3, missed3m: 17, missed3mT: -6, missed12m: 10, titration: 81, titrationT: 1, statins: 82, statinsT: 3, fudging: 1.6, fudgingT: -0.2, drugStock: "full", daysStock: 100, status: "risk", monthsFlagged: 0, isNew: false,
     cardInsights: ["BP control is 43% even though drug stock is full.", "Small facility (106 patients). A full chart review is possible.", "Medicines may not be getting adjusted enough."],
     detailSummary: ["Drug stock is full but BP control is low.", "With only 106 patients, a full chart review is practical."],
     concerns: [
@@ -223,7 +209,7 @@ const seeds: Seed[] = [
     verify: ["Review the charts of all patients with uncontrolled BP — possible at this size.", "Check if the medical officer is confident adjusting medicines. They may need support."],
     notes: [],
   },
-  { name: "Sylhet Sadar", patients: 5252, bpControl: 45, bpControlT: -2, bpUncontrolled: 33, bpUncontrolledT: 1, missed3m: 30, missed3mT: 0, missed12m: 11, titration: 34, titrationT: 0, statins: 45, statinsT: 1, fudging: 12, fudgingT: 0, drugStock: "full", status: "risk", monthsFlagged: 0, isNew: false,
+  { name: "Sylhet Sadar", patients: 5252, bpControl: 56, bpControlT: 8, bpUncontrolled: 37, bpUncontrolledT: -6, missed3m: 15, missed3mT: -1, missed12m: 11, titration: 93, titrationT: 6, statins: 90, statinsT: 8, fudging: 1.4, fudgingT: -0.1, drugStock: "full", daysStock: 69, status: "risk", monthsFlagged: 0, isNew: false,
     cardInsights: ["Largest facility — 5,252 patients.", "A 5-point improvement here means 260 more patients controlled.", "Fudging at 12% means about 630 readings may not be accurate."],
     detailSummary: ["Largest facility in the district — 5,252 patients.", "A 5-point improvement here would mean 260 more patients controlled."],
     concerns: [
@@ -238,7 +224,7 @@ const seeds: Seed[] = [
       { date: "20-Apr-2026", author: "Dr Rhati", body: "New data entry person hired and starting 1st May." },
     ],
   },
-  { name: "UHC Bishwanath", patients: 3195, bpControl: 46, bpControlT: -1, bpUncontrolled: 32, bpUncontrolledT: 0, missed3m: 28, missed3mT: 0, missed12m: 10, titration: 36, titrationT: 0, statins: 48, statinsT: 0, fudging: 10, fudgingT: 0, drugStock: "full", status: "risk", monthsFlagged: 0, isNew: false,
+  { name: "UHC Bishwanath", patients: 3195, bpControl: 46, bpControlT: 0, bpUncontrolled: 32, bpUncontrolledT: 0, missed3m: 22, missed3mT: 0, missed12m: 10, titration: 41, titrationT: 0, statins: 42, statinsT: 0, fudging: 3.7, fudgingT: 0, drugStock: "partial", daysStock: 32, status: "risk", monthsFlagged: 0, isNew: false,
     cardInsights: ["Second largest facility — 3,195 patients.", "Drug stock is full, but titration flat at 36% for 4 months.", "Fudging at 10% should be watched."],
     detailSummary: ["Second largest facility — 3,195 patients.", "Titration has been flat at 36% for 4 months."],
     concerns: [
@@ -248,7 +234,7 @@ const seeds: Seed[] = [
     verify: ["Sample 15 patients with high BP over the last 3 months. Were medicines changed?", "Talk to medical officers about their approach to adjusting medicines."],
     notes: [],
   },
-  { name: "CC Gopkanu", patients: 127, bpControl: 60, bpControlT: -1, bpUncontrolled: 23, bpUncontrolledT: 0, missed3m: 22, missed3mT: 0, missed12m: 6, titration: 40, titrationT: 0, statins: 48, statinsT: 0, fudging: 5, fudgingT: 0, drugStock: "full", status: "risk", monthsFlagged: 0, isNew: false,
+  { name: "CC Gopkanu", patients: 127, bpControl: 59, bpControlT: 1, bpUncontrolled: 19, bpUncontrolledT: 15, missed3m: 22, missed3mT: -12, missed12m: 6, titration: 66, titrationT: 5, statins: 61, statinsT: -2, fudging: 3.4, fudgingT: -0.1, drugStock: "full", daysStock: 95, status: "risk", monthsFlagged: 0, isNew: false,
     cardInsights: ["BP control is 60%, 2 points below the facility's own average.", "Patients come regularly (22% missed visits).", "Slight dip from baseline. Worth watching."],
     detailSummary: ["BP control dropped from a 6-month average of 62% to 60%.", "Patients are coming regularly. Small dip is likely clinical."],
     concerns: [
@@ -260,7 +246,7 @@ const seeds: Seed[] = [
     verify: ["Review the last 10 patients whose BP became uncontrolled. Were medicines adjusted?"],
     notes: [],
   },
-  { name: "CC Gungadiya", patients: 180, bpControl: 56, bpControlT: 6, bpUncontrolled: 26, bpUncontrolledT: -3, missed3m: 27, missed3mT: -2, missed12m: 8, titration: 42, titrationT: 3, statins: 50, statinsT: 2, fudging: 4, fudgingT: 0, drugStock: "full", status: "improving", monthsFlagged: 0, isNew: false,
+  { name: "CC Gungadiya", patients: 158, bpControl: 56, bpControlT: 7, bpUncontrolled: 38, bpUncontrolledT: -2, missed3m: 18, missed3mT: -6, missed12m: 8, titration: 90, titrationT: 8, statins: 81, statinsT: 8, fudging: 1.4, fudgingT: -0.1, drugStock: "full", daysStock: 91, status: "improving", monthsFlagged: 0, isNew: false,
     cardInsights: ["Biggest improvement this month — up 6 points to 56%.", "Calling overdue patients before their visit is working.", "Data is reliable (4% fudging) and drug stock is full."],
     detailSummary: ["Biggest improvement in the district — up 6 points.", "Reminder calls to overdue patients are working."],
     concerns: [],
@@ -274,7 +260,7 @@ const seeds: Seed[] = [
       { date: "12-Apr-2026", author: "Dr Sumara", body: "Call log reviewed: entries include outcome and next action. Recommended adding a 'reachable/not reachable' tick box to speed documentation." },
     ],
   },
-  { name: "CC Jamalpur", patients: 145, bpControl: 58, bpControlT: 5, bpUncontrolled: 24, bpUncontrolledT: -2, missed3m: 26, missed3mT: -1, missed12m: 7, titration: 40, titrationT: 2, statins: 48, statinsT: 1, fudging: 5, fudgingT: 0, drugStock: "full", status: "improving", monthsFlagged: 0, isNew: false,
+  { name: "CC Jamalpur", patients: 172, bpControl: 53, bpControlT: -7, bpUncontrolled: 18, bpUncontrolledT: 11, missed3m: 24, missed3mT: -8, missed12m: 7, titration: 66, titrationT: -2, statins: 55, statinsT: -11, fudging: 3.2, fudgingT: 0, drugStock: "full", daysStock: 82, status: "improving", monthsFlagged: 0, isNew: false,
     cardInsights: ["Up 5 points to 58%. Improving for 2 months in a row.", "Drug stock is full and titration is improving.", "Something changed. Ask the team what."],
     detailSummary: ["Up 5 points this month. Improving for 2 months.", "Drug stock is full. Titration is improving."],
     concerns: [],
@@ -284,7 +270,7 @@ const seeds: Seed[] = [
     verify: ["Ask the team what they changed over the last 2 months.", "Make sure drug supply stays steady."],
     notes: [],
   },
-  { name: "CC Hossainpur", patients: 121, bpControl: 64, bpControlT: 2, bpUncontrolled: 20, bpUncontrolledT: -1, missed3m: 19, missed3mT: -1, missed12m: 5, titration: 44, titrationT: 1, statins: 52, statinsT: 0, fudging: 4, fudgingT: 0, drugStock: "full", status: "improving", monthsFlagged: 0, isNew: false,
+  { name: "CC Hossainpur", patients: 121, bpControl: 54, bpControlT: 6, bpUncontrolled: 39, bpUncontrolledT: -2, missed3m: 20, missed3mT: -2, missed12m: 5, titration: 94, titrationT: 2, statins: 92, statinsT: 4, fudging: 1.4, fudgingT: 0, drugStock: "full", daysStock: 68, status: "improving", monthsFlagged: 0, isNew: false,
     cardInsights: ["BP control is 64% — very close to the 63% target.", "Missed visits are low at 19%.", "Up 2 points, improving steadily for 3 months."],
     detailSummary: ["64% BP control. Improving steadily for 3 months.", "Missed visits low at 19% — patients are engaged."],
     concerns: [],
@@ -294,7 +280,7 @@ const seeds: Seed[] = [
     verify: ["Review remaining patients with uncontrolled BP. Make sure medicines are being adjusted."],
     notes: [],
   },
-  { name: "CC Paton", patients: 155, bpControl: 66, bpControlT: 6, bpUncontrolled: 18, bpUncontrolledT: -2, missed3m: 22, missed3mT: -1, missed12m: 6, titration: 48, titrationT: 3, statins: 55, statinsT: 2, fudging: 3, fudgingT: 0, drugStock: "full", status: "improving", monthsFlagged: 0, isNew: false,
+  { name: "CC Paton", patients: 136, bpControl: 66, bpControlT: 9, bpUncontrolled: 16, bpUncontrolledT: 6, missed3m: 18, missed3mT: -11, missed12m: 6, titration: 64, titrationT: 13, statins: 62, statinsT: 8, fudging: 3, fudgingT: -0.1, drugStock: "full", daysStock: 97, status: "improving", monthsFlagged: 0, isNew: false,
     cardInsights: ["Up 6 points to 66%. Above the district target.", "Titration at 48% — doctors are actively adjusting medicines.", "Fudging is low (3%). Numbers are real."],
     detailSummary: ["Up 6 points to 66%. Above target.", "Titration excellent at 48%."],
     concerns: [],
@@ -307,7 +293,7 @@ const seeds: Seed[] = [
       { date: "09-Apr-2026", author: "Dr Amrita", body: "Verified drug stock card and expiry dates; no imminent expiries. Suggested keeping a small buffer stock for peak weeks." },
     ],
   },
-  { name: "CC Tirasigoan", patients: 123, bpControl: 67, bpControlT: -1, bpUncontrolled: 19, bpUncontrolledT: 0, missed3m: 24, missed3mT: 0, missed12m: 6, titration: 42, titrationT: 0, statins: 50, statinsT: 0, fudging: 4, fudgingT: 0, drugStock: "full", status: "target", monthsFlagged: 0, isNew: false,
+  { name: "CC Tirasigoan", patients: 123, bpControl: 67, bpControlT: -15, bpUncontrolled: 9, bpUncontrolledT: 4, missed3m: 24, missed3mT: -1, missed12m: 6, titration: 61, titrationT: -1, statins: 45, statinsT: 7, fudging: 3.4, fudgingT: 0.3, drugStock: "low", daysStock: 14, status: "target", monthsFlagged: 0, isNew: false,
     cardInsights: ["BP control is 67% — above target and steady.", "Small dip of 1 point is normal variation.", "All indicators look healthy."],
     detailSummary: ["67% BP control — above target and stable."],
     concerns: [],
@@ -321,7 +307,7 @@ const seeds: Seed[] = [
       { date: "17-Apr-2026", author: "Dr Amrita", body: "Stock card review: adequate buffer maintained. Recommended keeping reorder date visible on the wall to avoid last-minute requisitions." },
     ],
   },
-  { name: "CC Hakurbazar", patients: 122, bpControl: 69, bpControlT: 0, bpUncontrolled: 18, bpUncontrolledT: 0, missed3m: 24, missed3mT: 0, missed12m: 6, titration: 42, titrationT: 0, statins: 50, statinsT: 0, fudging: 4, fudgingT: 0, drugStock: "full", status: "target", monthsFlagged: 0, isNew: false,
+  { name: "CC Hakurbazar", patients: 122, bpControl: 69, bpControlT: 15, bpUncontrolled: 1, bpUncontrolledT: 14, missed3m: 30, missed3mT: 1, missed12m: 6, titration: 78, titrationT: 5, statins: 69, statinsT: -14, fudging: 2.8, fudgingT: 0.1, drugStock: "partial", daysStock: 31, status: "target", monthsFlagged: 0, isNew: false,
     cardInsights: ["BP control is 69% — above target.", "No change from last month.", "Clean data, full stock, balanced indicators."],
     detailSummary: ["69% BP control — above target and stable."],
     concerns: [],
@@ -329,7 +315,7 @@ const seeds: Seed[] = [
     verify: ["No action needed this month."],
     notes: [],
   },
-  { name: "CC Niyagul", patients: 146, bpControl: 69, bpControlT: -1, bpUncontrolled: 18, bpUncontrolledT: 0, missed3m: 23, missed3mT: 0, missed12m: 5, titration: 44, titrationT: 0, statins: 53, statinsT: 0, fudging: 4, fudgingT: 0, drugStock: "full", status: "target", monthsFlagged: 0, isNew: false,
+  { name: "CC Niyagul", patients: 146, bpControl: 56, bpControlT: -6, bpUncontrolled: 13, bpUncontrolledT: 10, missed3m: 18, missed3mT: -4, missed12m: 5, titration: 61, titrationT: -3, statins: 58, statinsT: 4, fudging: 3.2, fudgingT: 0.3, drugStock: "full", daysStock: 90, status: "target", monthsFlagged: 0, isNew: false,
     cardInsights: ["BP control is 69% — above target.", "All indicators stable.", "Low fudging and good retention."],
     detailSummary: ["69% BP control — above target and stable."],
     concerns: [],
@@ -337,7 +323,7 @@ const seeds: Seed[] = [
     verify: ["No action needed this month."],
     notes: [],
   },
-  { name: "CC Choto Desh", patients: 176, bpControl: 71, bpControlT: 0, bpUncontrolled: 17, bpUncontrolledT: 0, missed3m: 24, missed3mT: 0, missed12m: 6, titration: 45, titrationT: 0, statins: 54, statinsT: 0, fudging: 3, fudgingT: 0, drugStock: "full", status: "target", monthsFlagged: 0, isNew: false,
+  { name: "CC Choto Desh", patients: 176, bpControl: 71, bpControlT: 11, bpUncontrolled: 5, bpUncontrolledT: 5, missed3m: 24, missed3mT: -6, missed12m: 6, titration: 90, titrationT: 4, statins: 78, statinsT: -3, fudging: 1.7, fudgingT: -0.3, drugStock: "full", daysStock: 97, status: "target", monthsFlagged: 0, isNew: false,
     cardInsights: ["71% BP control. Well above district average of 54%.", "Clean data (3% fudging) and full drug stock.", "No change from last month."],
     detailSummary: ["71% BP control. Stable and well above district average."],
     concerns: [],
@@ -345,7 +331,7 @@ const seeds: Seed[] = [
     verify: ["No action needed this month."],
     notes: [],
   },
-  { name: "CC Nandisri", patients: 139, bpControl: 71, bpControlT: -1, bpUncontrolled: 16, bpUncontrolledT: 0, missed3m: 25, missed3mT: 0, missed12m: 6, titration: 43, titrationT: 0, statins: 52, statinsT: 0, fudging: 4, fudgingT: 0, drugStock: "full", status: "target", monthsFlagged: 0, isNew: false,
+  { name: "CC Nandisri", patients: 139, bpControl: 57, bpControlT: 6, bpUncontrolled: 37, bpUncontrolledT: -6, missed3m: 20, missed3mT: -4, missed12m: 6, titration: 83, titrationT: 1, statins: 83, statinsT: 4, fudging: 2.3, fudgingT: 0.1, drugStock: "full", daysStock: 94, status: "target", monthsFlagged: 0, isNew: false,
     cardInsights: ["71% BP control. Small 1-point dip is normal.", "All other indicators unchanged."],
     detailSummary: ["71% BP control. Stable."],
     concerns: [],
@@ -353,7 +339,7 @@ const seeds: Seed[] = [
     verify: ["No action needed this month."],
     notes: [],
   },
-  { name: "CC Rajnagor", patients: 115, bpControl: 72, bpControlT: 4, bpUncontrolled: 16, bpUncontrolledT: -1, missed3m: 23, missed3mT: -1, missed12m: 5, titration: 46, titrationT: 2, statins: 55, statinsT: 1, fudging: 3, fudgingT: 0, drugStock: "full", status: "improving", monthsFlagged: 0, isNew: false,
+  { name: "CC Rajnagor", patients: 115, bpControl: 62, bpControlT: 5, bpUncontrolled: 31, bpUncontrolledT: -7, missed3m: 19, missed3mT: -2, missed12m: 5, titration: 90, titrationT: 5, statins: 85, statinsT: 4, fudging: 2.1, fudgingT: -0.2, drugStock: "full", daysStock: 102, status: "improving", monthsFlagged: 0, isNew: false,
     cardInsights: ["Up 4 points to 72%. Already above target.", "Local radio message about drug availability brought patients back.", "Titration is also improving."],
     detailSummary: ["Up 4 points to 72%. Already above target.", "Local radio broadcast brought patients back to care."],
     concerns: [],
@@ -365,7 +351,7 @@ const seeds: Seed[] = [
       { date: "01-Apr-2026", author: "Dr Rhati", body: "Team arranged a 2-minute slot on local radio for 2 weeks. Message was simple: 'Medicines are in stock, please come for your check-up.' Worth trying elsewhere." },
     ],
   },
-  { name: "CC Lalarchak", patients: 109, bpControl: 73, bpControlT: 0, bpUncontrolled: 15, bpUncontrolledT: 0, missed3m: 24, missed3mT: 0, missed12m: 6, titration: 44, titrationT: 0, statins: 52, statinsT: 0, fudging: 4, fudgingT: 0, drugStock: "full", status: "target", monthsFlagged: 0, isNew: false,
+  { name: "CC Lalarchak", patients: 109, bpControl: 72, bpControlT: 15, bpUncontrolled: 0, bpUncontrolledT: -11, missed3m: 28, missed3mT: -13, missed12m: 6, titration: 81, titrationT: -6, statins: 82, statinsT: 7, fudging: 1.7, fudgingT: 0.1, drugStock: "full", daysStock: 99, status: "target", monthsFlagged: 0, isNew: false,
     cardInsights: ["73% BP control. Solid and stable.", "Missed visits slightly higher than top performers.", "Room to grow with better retention."],
     detailSummary: ["73% BP control. Stable and above target."],
     concerns: [],
@@ -373,7 +359,7 @@ const seeds: Seed[] = [
     verify: ["No urgent action. Monitor monthly."],
     notes: [],
   },
-  { name: "CC Nij Chaura", patients: 216, bpControl: 75, bpControlT: 1, bpUncontrolled: 14, bpUncontrolledT: 0, missed3m: 22, missed3mT: 0, missed12m: 5, titration: 50, titrationT: 1, statins: 58, statinsT: 0, fudging: 3, fudgingT: 0, drugStock: "full", status: "top", monthsFlagged: 0, isNew: false,
+  { name: "CC Nij Chaura", patients: 216, bpControl: 75, bpControlT: 15, bpUncontrolled: 3, bpUncontrolledT: -15, missed3m: 22, missed3mT: -5, missed12m: 5, titration: 94, titrationT: 1, statins: 90, statinsT: 10, fudging: 1.1, fudgingT: 0, drugStock: "full", daysStock: 103, status: "top", monthsFlagged: 0, isNew: false,
     cardInsights: ["75% BP control. Balanced indicators.", "Titration is strong at 50%. Fudging is very low at 3%.", "Consistent top performer."],
     detailSummary: ["75% BP control. One of the top facilities in the district."],
     concerns: [],
@@ -383,7 +369,7 @@ const seeds: Seed[] = [
     verify: ["Could be paired as a mentor for nearby underperforming facilities."],
     notes: [],
   },
-  { name: "CC Kargram", patients: 213, bpControl: 78, bpControlT: 0, bpUncontrolled: 12, bpUncontrolledT: 0, missed3m: 16, missed3mT: 0, missed12m: 3, titration: 52, titrationT: 0, statins: 60, statinsT: 0, fudging: 2, fudgingT: 0, drugStock: "full", status: "top", monthsFlagged: 0, isNew: false,
+  { name: "CC Kargram", patients: 213, bpControl: 78, bpControlT: 10, bpUncontrolled: 7, bpUncontrolledT: -5, missed3m: 15, missed3mT: -15, missed12m: 3, titration: 90, titrationT: 2, statins: 82, statinsT: 14, fudging: 1.6, fudgingT: 0.3, drugStock: "full", daysStock: 107, status: "top", monthsFlagged: 0, isNew: false,
     cardInsights: ["78% BP control. Second highest in the district.", "Lowest missed visits at 16% — the gold standard.", "Strong clinical practice across the board."],
     detailSummary: ["78% BP control. Second highest in the district.", "Lowest missed visit rate at 16%."],
     concerns: [],
@@ -393,7 +379,7 @@ const seeds: Seed[] = [
     verify: ["Use as a benchmark for other facilities.", "Document the specific practices used here."],
     notes: [],
   },
-  { name: "CC Kayasthagram", patients: 142, bpControl: 80, bpControlT: 1, bpUncontrolled: 10, bpUncontrolledT: 0, missed3m: 19, missed3mT: 0, missed12m: 4, titration: 55, titrationT: 1, statins: 62, statinsT: 0, fudging: 2, fudgingT: 0, drugStock: "full", status: "top", monthsFlagged: 0, isNew: false,
+  { name: "CC Kayasthagram", patients: 142, bpControl: 80, bpControlT: -4, bpUncontrolled: 1, bpUncontrolledT: 15, missed3m: 19, missed3mT: -12, missed12m: 4, titration: 80, titrationT: -9, statins: 75, statinsT: 7, fudging: 2.2, fudgingT: -0.2, drugStock: "full", daysStock: 96, status: "top", monthsFlagged: 0, isNew: false,
     cardInsights: ["Highest BP control in the district at 80%.", "Close follow-up with new patients in first 3 months is working.", "Excellent on every indicator."],
     detailSummary: ["Highest BP control in the district at 80%.", "Close follow-up with new patients for their first 3 months built trust."],
     concerns: [],
@@ -411,7 +397,6 @@ const seeds: Seed[] = [
 export const FACILITIES: Facility[] = seeds.map((s) => ({
   ...s,
   id: idOf(s.name),
-  daysStock: nextDays(s.drugStock),
 }));
 
 // Composite priority score (lower = more urgent). Used in backend ranking only.
