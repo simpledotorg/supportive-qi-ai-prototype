@@ -215,7 +215,7 @@ main {
   width: 100%;
   max-width: 1600px;
   margin: auto;
-  padding: 0 16px 16px;
+  padding: 0 0 16px;
 
   .columns-2,
   .columns-3 {
@@ -228,7 +228,7 @@ main {
 
 @media screen and (min-width: 880px) {
   main {
-    padding: 0 24px 16px;
+    padding: 0 0 16px;
 
     .columns-2,
     .columns-3 {
