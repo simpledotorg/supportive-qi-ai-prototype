@@ -553,10 +553,14 @@
       </h1>
 
       <div class="link-list">
-        <span style="padding:2px 4px;background:#3063c2;display:inline-block;height:100%;color:white;border-radius:3px;font-size:11px;">v1.4</span>
         <a href="#">About</a>
         <a class="external-link desktop-only" href="#">Developer guide</a>
         <a class="external-link" href="#">GitHub</a>
+        <button
+          id="reset-demo"
+          type="button"
+          style="padding:2px 4px;background:#3063c2;display:inline-block;height:100%;color:white;border-radius:3px;font-size:11px;border:1px solid #ffffff50;"
+        >Reset demo</button>
       </div>
     </div>
   </div>
@@ -1357,6 +1361,32 @@
 
       initDistrictSummaryLinks();
       syncToggles(layout.classList.contains("prototype-sidebar-open"));
+    })();
+  </script>
+
+  <!-- ── Reset demo (clear project browser storage) ──────────────────── -->
+  <script>
+    (function () {
+      var btn = document.getElementById("reset-demo");
+      if (!btn) return;
+
+      function clearPrefixed(storage, prefix) {
+        if (!storage) return;
+        // Iterate backwards because we're mutating while iterating.
+        for (var i = storage.length - 1; i >= 0; i--) {
+          var key = storage.key(i);
+          if (key && key.indexOf(prefix) === 0) storage.removeItem(key);
+        }
+      }
+
+      btn.addEventListener("click", function () {
+        // React app state is stored under localStorage keys prefixed "fr." (see src/hooks/useLocalState.ts).
+        clearPrefixed(window.localStorage, "fr.");
+        clearPrefixed(window.sessionStorage, "fr.");
+
+        // Return to a clean slate.
+        try { window.location.reload(); } catch (e) {}
+      });
     })();
   </script>
 
