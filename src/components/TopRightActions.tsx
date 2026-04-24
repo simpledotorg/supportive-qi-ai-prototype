@@ -1,6 +1,7 @@
 import { Download, Share2, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function download(url: string, filename: string) {
   const a = document.createElement("a");
@@ -22,11 +23,25 @@ async function copyToClipboard(text: string) {
 }
 
 export function TopRightActions() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const handleClose = () => {
-    // Best-effort: window.close() only works for windows opened by script.
-    window.close();
-    // Fallback: if it didn't close, at least reset to app root.
-    window.location.assign(import.meta.env.BASE_URL);
+    // In the prototype shell, React is mounted in an <aside>. Closing should NOT hard-navigate,
+    // otherwise the main page reloads and the user loses their scroll position.
+    const layout = document.getElementById("prototype-layout");
+    const aside = document.getElementById("prototype-aside");
+    const didClosePrototypeAside = Boolean(layout && aside);
+
+    if (layout) layout.classList.remove("prototype-sidebar-open");
+    if (aside) aside.classList.remove("prototype-aside-open");
+    document.body.classList.remove("h360-aside-open");
+
+    // If we're not inside the prototype shell (or if the user is on a facility route),
+    // fall back to soft navigation to the app root (no full reload).
+    if (!didClosePrototypeAside || location.pathname.startsWith("/facility/")) {
+      navigate("/", { replace: true });
+    }
   };
 
   const handleShare = async () => {
