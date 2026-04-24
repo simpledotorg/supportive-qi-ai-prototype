@@ -196,7 +196,7 @@ const bpControlledData = {
   datasets: [
     {
       label: "BP controlled",
-      data: [43, 44, 46, 43, 52, 57, 57, 59, 56, 60, 61, 55],
+      data: [43, 44, 46, 43, 52, 57, 57, 59, 56, 56, 54, 55],
       borderColor: "#3BB231",
       backgroundColor: "rgba(69, 205, 57, 0.1)",
       segment: {
@@ -245,7 +245,7 @@ const bpUncontrolledData = {
   datasets: [
     {
       label: "BP uncontrolled",
-      data: [37, 33, 36, 37, 30, 28, 24, 24, 18, 17, 17, 20],
+      data: [37, 33, 36, 37, 30, 28, 24, 24, 18, 16, 17, 20],
       borderColor: "#D19600",
       backgroundColor: "rgba(255, 201, 63, 0.1)",
       segment: {
@@ -291,7 +291,7 @@ const ltfu3MonthData = {
   datasets: [
     {
       label: "No visit in past 3 months",
-      data: [20, 23, 18, 20, 18, 15, 19, 17, 26, 21, 22, 25],
+      data: [20, 23, 18, 20, 18, 15, 19, 17, 26, 30, 31, 25],
       borderColor: "#ed6300",
       backgroundColor: "rgba(230, 137, 70, 0.1)",
       segment: {
